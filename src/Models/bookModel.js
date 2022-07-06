@@ -6,7 +6,7 @@ const bookSchema = new mongoose.Schema({
 
     excerpt: {type: String, required: true}, 
 
-    userId: {ObjectId, required: true, ref: "user"},
+    userId: {type: ObjectId, required: true, ref: "user"},
 
     ISBN: {type: String, required: true, unique: true},
 
@@ -25,3 +25,5 @@ const bookSchema = new mongoose.Schema({
     {timestamps: true})
 
     module.exports = mongoose.model('books', bookSchema)
+
+  

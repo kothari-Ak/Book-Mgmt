@@ -122,6 +122,41 @@ const createBook = async function (req, res) {
         }
     }
 
+    const getBooks = async function (req, res) {
+        try {
+          let getQueryData = req.query;
+      
+          const { userId, category, subcategory } = getQueryData;
+      
+          if (Object.keys(getQueryData).length > 0) {
+            if (!userId && !category && !subcategory) {
+              return res.status(400).send({
+                status: false,
+                message: "Please enter value like  'userId','category','subcategory'",
+              });
+            }
+          }
+      
+          //value which will show in response
+          let valueToShow = {
+            _id: 1,
+            title: 1,
+            excerpt: 1,
+            userId: 1,
+            category: 1,
+            subcategory: 1,
+            releasedAt: 1,
+            reviews: 1,
+          }
+        }
+           catch (error) {
+          res.status(500).send({ status: false, message: error.message });
+        }
+      }
+      //getBooksDataById
+      
+      
+
 const updateBook = async function (req, res) {
     try {
         const Id = req.params.bookId;
@@ -167,8 +202,12 @@ const deleteById = async function(req,res){
     } catch (error) {
         return res.status(500).send({status:false, error: error.name, msg: error.message})
     }
+
+
 }
 
 module.exports.createBook= createBook
 module.exports.updateBook= updateBook
 module.exports.deleteById= deleteById
+module.exports.getBooks=getBooks
+

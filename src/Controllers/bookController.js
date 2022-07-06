@@ -1,4 +1,8 @@
-const bookModel = require('../models/bookModel');
+const mongoose  = require("mongoose");
+const bookModel = require("../Models/bookModel")
+const userModel = require("../Models/userModel")
+const validator = require("../validator/validator.js")
+
 
 const updateBook = async function (req, res) {
     try {
@@ -19,8 +23,9 @@ const updateBook = async function (req, res) {
             data.ISBN = [...data.ISBN]   
         }
 
+        const d = new Date; const dateTime = d.toLocaleString();
 
-        const updated = await bookModel.findByIdAndUpdate(Id, { $set: { ...data, "release date" : Date.now() } }, { new: true });
+        const updated = await bookModel.findByIdAndUpdate(Id, { $set: { ...data, "release date" : dateTime } }, { new: true });
         return res.status(200).send({ status: true, data: updated });
 
     } catch (err) {
@@ -32,7 +37,7 @@ const updateBook = async function (req, res) {
 const deleteById = async function(req,res){
     try {
         const id = req.params.bookId;
-        const blog = await bookModel.findById(id);
+        const book = await bookModel.findById(id);
         if(!book || book.isDeleted === true){return res.status(404).send({status:false, msg: "no such book exists"})};//validation1
         
         const d = new Date; const dateTime = d.toLocaleString();
@@ -46,12 +51,5 @@ const deleteById = async function(req,res){
 }
 
 
-
 module.exports.updateBook= updateBook
 module.exports.deleteById= deleteById
-// deletedAt: {type: Date}, 
-
-//     isDeleted: {type:Boolean, default: false},
-
-//     releasedAt: {type: Date, required: true}},
-    

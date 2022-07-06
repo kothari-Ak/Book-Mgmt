@@ -1,3 +1,4 @@
+
 const isValid = function (value) {
     if (typeof value === "undefined" || value === null) return false;
     if (typeof value === "string" && value.trim().length === 0) return false;
@@ -45,7 +46,18 @@ const isValid = function (value) {
     }
     return true;
 }
-  
+
+
+let titleValidator = function (title) {
+  let regx = /^[a-zA-z]+([\s][a-zA-Z\,]+)*$/;
+  return regx.test(title);
+}
+
+let ISBNvalidate=function(ISBN){
+let ISBNRegex = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/;
+return regx.test(ISBN)
+}
+
   module.exports.isValid = isValid
   module.exports.isValidUrl = isValidUrl
   module.exports.isValidCharacterLimit2to8 = isValidCharacterLimit2to8
@@ -53,5 +65,7 @@ const isValid = function (value) {
   module.exports.isValidNumber = isValidNumber
   module.exports.isValidEmail = isValidEmail
   module.exports.isArrString=isArrString
+  module.exports.titleValidator=titleValidator
+  module.exports.ISBNvalidate=ISBNvalidate
   
-  
+

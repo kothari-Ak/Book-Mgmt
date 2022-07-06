@@ -41,10 +41,39 @@ const createBook = async function (req, res) {
         if (Object.keys(data).length == 0) {
             return res.status(400).send({ status: false, msg: "Body should not be Empty.. " })
         }
+
+        if (title) {
+            let checkTitle = await BookModel.findOne({ title: title })
+
+            if (checkTitle) {
+                return res.status(400).send({ Status: false, message: "Please provide another title, this title has been used ⚠️⚠️" })
+            }
+        }
+        else { data.title = data.title.trim() }
+
+        if (excerpt) {
+            let checkExcerpt = await BookModel.findOne({ excerpt: excerpt })
+
+            if (checkExcerpt) {
+                return res.status(400).send({ Status: false, message: "Please provide another excerpt, this excerpt has been used ⚠️⚠️" })
+            }
+        }
+        else { data.excerpt = data.excerpt.trim() }
+
+        if (ISBN) {
+            let checkISBN = await BookModel.findOne({ ISBN: ISBN })
+
+            if (checkISBN) {
+                return res.status(400).send({ Status: false, message: "Please provide another ISBN, this ISBN has been used ⚠️⚠️" })
+            }
+        }
+        else { data.ISBN = data.ISBN.trim() }
+
         let UserId = data.userId
         let FindId = await UserModel.findById(UserId)
         if (!FindId) return res.status(400).send({ status: false, msg: 'UserId does not exist' })
-
+         
+        
         let bookCreated = await BookModel.create(data)
         res.status(201).send({ status: true, data: bookCreated })
     }

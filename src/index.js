@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const {default: mongoose} = require('mongoose');
 const multer = require ('multer')
 
-const route = require('./routes/route')
+const route = require("../src/route")
 
 const app = express();
 

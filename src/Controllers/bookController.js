@@ -29,7 +29,7 @@ const validator= require("../validator/validator")
 const isValid = function (value) {
     if (typeof value === "undefined" || value === null) return false;
     if (typeof value === "string" && value.trim().length === 0) return false;
-    if(!mongoose.Types.ObjectId.isValid(userId)) return false
+    
     return true}
   
 
@@ -43,7 +43,7 @@ module.exports.createBook = async function (req, res) {
         if ( !validator.titleValidator ( title ) ) inValid = inValid + "title "
         if ( !validator.titleValidator ( excerpt ) ) inValid = inValid + "excerpt "
         if ( !isValid ( userId ) ) inValid = inValid + "userId "
-        if ( !isValid ( ISBN ) ) inValid = inValid + "ISBN "
+        if ( !validator.ISBNvalidate( ISBN ) ) inValid = inValid + "ISBN "
         if ( !isValid ( category ) ) inValid = inValid + "category "
         if ( !isValid ( subcategory ) ) inValid = inValid + "subcategory "
          if ( !isValid ( releasedAt  ) ) inValid = inValid + "releasedAt  "
@@ -51,6 +51,27 @@ module.exports.createBook = async function (req, res) {
         if ( !isValid(title) || !isValid(excerpt) ||!isValid(userId) || !isValid(ISBN) || !isValid(category) || !isValid(subcategory)|| !isValid(releasedAt)){
             return res.status(400).send({ status: false, msg: `Enter valid details in following field(s): ${inValid}` })
         }
+
+        
+
+//         const printDate = function (){
+//             const today = new Date();
+        
+//         const date = ("Today's Date" +'-'+today.getDate());
+//           const month= ('Month'+'-'+ (today.getMonth()+1));
+//           const year= ('Year'+'-'+ (today.getFullYear()));
+
+// console.log(year+month+date)
+        
+        
+//         }
+        
+//        const printMonth = function(){
+//             const today =  new Date();
+        
+//             const date = ('Month'+'-'+ (today.getMonth()+1));
+//             console.log(date)
+//         }
    
         if (Object.keys(data).length == 0) {
             return res.status(400).send({ status: false, msg: "Body should not be Empty.. " })
@@ -92,7 +113,8 @@ module.exports.createBook = async function (req, res) {
         let FindId = await UserModel.findById(UserId)
         if (!FindId) return res.status(400).send({ status: false, msg: 'UserId does not exist' })
 
-
+        if(!FindId.length==24)
+        return res.status(400).send({ status: false, msg: 'UserId is not valid' })
         
         if (!ISBN|| ISBN.trim() == "")
         return res.status(400).send({ Status: false, message: "Please provide ISBN ⚠️⚠️" })

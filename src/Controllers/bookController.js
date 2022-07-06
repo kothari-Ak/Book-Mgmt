@@ -14,18 +14,21 @@ const updateBook = async function (req, res) {
         if(!book || book.isDeleted === true){return res.status(404).send({status:false, msg: "no such book exists"})};//validation1
 
         if (data.title) {
-            data.title = [...data.title];
+            data.title = data.title;
         }
         if (data.excerpt) {
-            data.excerpt = [...data.excerpt];
+            data.excerpt = data.excerpt;
         }
         if (data.ISBN) {
-            data.ISBN = [...data.ISBN]   
+            data.ISBN = data.ISBN   
+        }
+        if (data["release date"]) {
+            data["release date"] = data["release date"]   
         }
 
         const d = new Date; const dateTime = d.toLocaleString();
 
-        const updated = await bookModel.findByIdAndUpdate(Id, { $set: { ...data, "release date" : dateTime } }, { new: true });
+        const updated = await bookModel.findByIdAndUpdate(Id, { $set: {...data} }, { new: true });
         return res.status(200).send({ status: true, data: updated });
 
     } catch (err) {

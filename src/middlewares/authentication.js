@@ -10,10 +10,13 @@ let Authentication = async function (req, res, next) {
     if (!key)
       return res.status(400).send({ msg: "x-api-key header is required" });
 
-    let isKeyTrue = jwt.verify(key, "bm-8");
-    if (!isKeyTrue) return res.status(400).send({ err: "invalid key" });
+    // let isKeyTrue = jwt.verify(key, "bm-8");
+    // if (!isKeyTrue) return res.status(400).send({ err: "invalid key" });
 
-    next();
+        jwt.verify(key, "bm-8",((error)=> {
+          if(error){return res.status(401).send({status:false, msg:"invalid token recived for authentication"})};
+          next();
+       }))
   } catch (error) {
     return res.status(500).send({ err: error.message });
   } 
@@ -97,10 +100,7 @@ module.exports.AuthorizationToQuary=AuthorizationToQuary
 //       const token = req.headers["x-api-key"];    //how to auto insert separate secret key for each login?
 //       if (!token) { return res.status(401).send({ status: false, error: "token not sent", msg: "token is mandatory" }) } //validation1
     
-//       jwt.verify(token, "bm-8",((error)=> {
-//           if(error){return res.status(401).send({status:false, msg:"invalid token recived for authentication"})};
-//           next();
-//        }));
+
 //   } catch (error) {
 //       return res.status(500).send({ status: false, error: error.name, msg: error.message }) 
 //   }

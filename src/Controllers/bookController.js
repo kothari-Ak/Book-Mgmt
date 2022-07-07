@@ -1,60 +1,15 @@
-const BookModel = require("../Models/bookModel")
-const UserModel = require("../Models/userModel")
-const mongoose = require("mongoose")
-const validator= require("../validator/validator")
+const mongoose  = require("mongoose");
+const bookModel = require("../Models/bookModel")
+const userModel = require("../Models/userModel")
+const validator = require("../validator/validator.js")
 
 
-
-// ========================[CreateBlog]==================================
-// const isValid = function (value) {
-//     // if( typeof value === 'undefined' || value === null ) {
-//     //   // console.log("1")
-//     //     return false
-//     // }
-//     if( typeof value == 'string' && value.trim().length == 0 ) {
-//     //   console.log("2")
-//         return false
-//     }
-//     if ( typeof value == 'string' && value.length !== value.trim().length ) {
-//       // console.log("4")
-//         return false
-//     }
-//     if ( typeof value == 'number' ) {
-//       // console.log("5")
-//         return false
-//     }
-//     return true
-//   }
-
-// const isValid = function (value) {
-//     if (typeof value === "undefined" || value === null) return false;
-//     if (typeof value === "string" && value.trim().length === 0) return false;
-    
-//     return true}
-  
-
-
-module.exports.createBook = async function (req, res) {
+const createBook = async function (req, res) {
     try {
         let data = req.body
         
-        const { title, excerpt, userId,ISBN, category,subcategory, releasedAt } = data;
-        // let inValid = ' '
-        // if ( !validator.titleValidator ( title ) ) inValid = inValid + "title "
-        // if ( !validator.titleValidator ( excerpt ) ) inValid = inValid + "excerpt "
-        // if ( !isValid ( userId ) ) inValid = inValid + "userId "
-        // if ( !validator.ISBNvalidate( ISBN ) ) inValid = inValid + "ISBN "
-        // if ( !isValid ( category ) ) inValid = inValid + "category "
-        // if ( !isValid ( subcategory ) ) inValid = inValid + "subcategory "
-        //  if ( !isValid ( releasedAt  ) ) inValid = inValid + "releasedAt  "
-        // // if ( !isValid ( reviews ) ) inValid = inValid + "reviews "
-        // if ( !isValid(title) || !isValid(excerpt) ||!isValid(userId) || !isValid(ISBN) || !isValid(category) || !isValid(subcategory)|| !isValid(releasedAt)){
-        //     return res.status(400).send({ status: false, msg: `Enter valid details in following field(s): ${inValid}` })
-        // }
-
-        
-
-//         const printDate = function (){
+        const { title, excerpt, userId,ISBN, category,subcategory, releasedAt } = data
+//      const printDate = function (){
 //             const today = new Date();
         
 //         const date = ("Today's Date" +'-'+today.getDate());
@@ -83,7 +38,7 @@ module.exports.createBook = async function (req, res) {
         data.title = data.title.trim()
 
         if (title) {
-            let checkTitle = await BookModel.findOne({ title: title })
+            let checkTitle = await bookModel.findOne({ title: title })
 
             if (checkTitle) {
                 return res.status(400).send({ Status: false, message: "Please provide another title, this title has been used ⚠️⚠️" })
@@ -97,7 +52,7 @@ module.exports.createBook = async function (req, res) {
         data.excerpt = data.excerpt.trim()
 
         if (excerpt) {
-            let checkExcerpt = await BookModel.findOne({ excerpt: excerpt })
+            let checkExcerpt = await bookModel.findOne({ excerpt: excerpt })
 
             if (checkExcerpt) {
                 return res.status(400).send({ Status: false, message: "Please provide another excerpt, this excerpt has been used ⚠️⚠️" })
@@ -110,7 +65,7 @@ module.exports.createBook = async function (req, res) {
         data.userId = data.userId.trim()
        
         let UserId = data.userId
-        let FindId = await UserModel.findById(UserId)
+        let FindId = await userModel.findById(UserId)
         if (!FindId) return res.status(400).send({ status: false, msg: 'UserId does not exist' })
 
         if(!FindId.length==24)
@@ -122,7 +77,7 @@ module.exports.createBook = async function (req, res) {
         data.ISBN = data.ISBN.trim()
 
     if (ISBN) {
-            let checkISBN = await BookModel.findOne({ ISBN: ISBN })
+            let checkISBN = await bookModel.findOne({ ISBN: ISBN })
 
             if (checkISBN) {
                 return res.status(400).send({ Status: false, message: "Please provide another ISBN, this ISBN has been used ⚠️⚠️" })
@@ -142,13 +97,106 @@ module.exports.createBook = async function (req, res) {
         data.subcategory = data.subcategory.trim()
       
          
+        if (!releasedAt|| releasedAt.trim() == "")
+        return res.status(400).send({ Status: false, message: "Please provide releasedAt ⚠️⚠️" })
+    else
+        data.releasedAt = data.releasedAt.trim()
         // const date=new Date;
         // const dateTime=  date.toLocaleString()
 
-     let bookCreated = await BookModel.create(data)
-        res.status(201).send({ status: true, data: bookCreated})
+     let bookCreated = await bookModel.create(data)
+        res.status(201).send({ status: true, data: bookCreated})    }
+        catch (err) {
+            res.status(500).send({ msg: "Error", error: err.message })
+        }
     }
-    catch (err) {
-        res.status(500).send({ msg: "Error", error: err.message })
+
+    const getBooks = async function (req, res) {
+        try {
+          let getQueryData = req.query;
+      
+          const { userId, category, subcategory } = getQueryData;
+      
+          if (Object.keys(getQueryData).length > 0) {
+            if (!userId && !category && !subcategory) {
+              return res.status(400).send({
+                status: false,
+                message: "Please enter value like  'userId','category','subcategory'",
+              });
+            }
+          }
+      
+          //value which will show in response
+          let valueToShow = {
+            _id: 1,
+            title: 1,
+            excerpt: 1,
+            userId: 1,
+            category: 1,
+            subcategory: 1,
+            releasedAt: 1,
+            reviews: 1,
+          }
+        }
+           catch (error) {
+          res.status(500).send({ status: false, message: error.message });
+        }
+      }
+      //getBooksDataById
+      
+      
+
+const updateBook = async function (req, res) {
+    try {
+        const Id = req.params.bookId;
+        let data = req.body;
+        if (Object.keys(data).length === 0) { return res.status(400).send({ status: false, msg: "cannot update empty body" }) };   //validation1
+
+        const book = await bookModel.findById(Id);  
+        if(!book || book.isDeleted === true){return res.status(404).send({status:false, msg: "no such book exists"})};//validation1
+
+        if (data.title) {
+            data.title = data.title;
+        }
+        if (data.excerpt) {
+            data.excerpt = data.excerpt;
+        }
+        if (data.ISBN) {
+            data.ISBN = data.ISBN   
+        }
+        if (data["release date"]) {
+            data["release date"] = data["release date"]   
+        }
+
+        const d = new Date; const dateTime = d.toLocaleString();
+
+        const updated = await bookModel.findByIdAndUpdate(Id, { $set: {...data} }, { new: true });
+        return res.status(200).send({ status: true, data: updated });
+
+    } catch (err) {
+        return res.status(500).send({ status: false, error: err.name, msg: err.message })  
+    }}
+
+const deleteById = async function(req,res){
+    try {
+        const id = req.params.bookId;
+        const book = await bookModel.findById(id);
+        if(!book || book.isDeleted === true){return res.status(404).send({status:false, msg: "no such book exists"})};//validation1
+        
+        const d = new Date; const dateTime = d.toLocaleString();
+
+        await bookModel.findByIdAndUpdate(id, {$set: {isDeleted: true, deletedAt: dateTime}});
+        return res.status(200).send({status:true, msg: "book deleted successfully"});
+
+    } catch (error) {
+        return res.status(500).send({status:false, error: error.name, msg: error.message})
     }
+
+
 }
+
+module.exports.createBook= createBook
+module.exports.updateBook= updateBook
+module.exports.deleteById= deleteById
+module.exports.getBooks=getBooks
+

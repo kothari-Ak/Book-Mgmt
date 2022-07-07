@@ -9,7 +9,7 @@ const reviewSchema = new mongoose.Schema({
 
     reviewedAt: {type: Date, required: true},
 
-    rating: {type: Number, required: true},
+    rating: {type: Number, required: true}, // new rating validator
 
     review: {type: String},
 
@@ -18,3 +18,5 @@ const reviewSchema = new mongoose.Schema({
     {timestamps: true})
 
     module.exports = mongoose.model('BookReview', reviewSchema)
+
+ 

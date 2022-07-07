@@ -20,3 +20,4 @@ title: {type: String, required: true, enum: ["Mr", "Mrs", "Miss"]},
     {timestamps: true})
 
 module.exports = mongoose.model('user', userSchema)
+

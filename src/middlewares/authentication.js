@@ -16,7 +16,7 @@ let Authentication = async function (req, res, next) {
     next();
   } catch (error) {
     return res.status(500).send({ err: error.message });
-  } 
+  }
 };
 
 module.exports.Authentication = Authentication

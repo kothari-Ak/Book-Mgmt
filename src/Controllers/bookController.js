@@ -26,11 +26,11 @@ const validator= require("../validator/validator")
 //     return true
 //   }
 
-const isValid = function (value) {
-    if (typeof value === "undefined" || value === null) return false;
-    if (typeof value === "string" && value.trim().length === 0) return false;
+// const isValid = function (value) {
+//     if (typeof value === "undefined" || value === null) return false;
+//     if (typeof value === "string" && value.trim().length === 0) return false;
     
-    return true}
+//     return true}
   
 
 
@@ -39,18 +39,18 @@ module.exports.createBook = async function (req, res) {
         let data = req.body
         
         const { title, excerpt, userId,ISBN, category,subcategory, releasedAt } = data;
-        let inValid = ' '
-        if ( !validator.titleValidator ( title ) ) inValid = inValid + "title "
-        if ( !validator.titleValidator ( excerpt ) ) inValid = inValid + "excerpt "
-        if ( !isValid ( userId ) ) inValid = inValid + "userId "
-        if ( !validator.ISBNvalidate( ISBN ) ) inValid = inValid + "ISBN "
-        if ( !isValid ( category ) ) inValid = inValid + "category "
-        if ( !isValid ( subcategory ) ) inValid = inValid + "subcategory "
-         if ( !isValid ( releasedAt  ) ) inValid = inValid + "releasedAt  "
-        // if ( !isValid ( reviews ) ) inValid = inValid + "reviews "
-        if ( !isValid(title) || !isValid(excerpt) ||!isValid(userId) || !isValid(ISBN) || !isValid(category) || !isValid(subcategory)|| !isValid(releasedAt)){
-            return res.status(400).send({ status: false, msg: `Enter valid details in following field(s): ${inValid}` })
-        }
+        // let inValid = ' '
+        // if ( !validator.titleValidator ( title ) ) inValid = inValid + "title "
+        // if ( !validator.titleValidator ( excerpt ) ) inValid = inValid + "excerpt "
+        // if ( !isValid ( userId ) ) inValid = inValid + "userId "
+        // if ( !validator.ISBNvalidate( ISBN ) ) inValid = inValid + "ISBN "
+        // if ( !isValid ( category ) ) inValid = inValid + "category "
+        // if ( !isValid ( subcategory ) ) inValid = inValid + "subcategory "
+        //  if ( !isValid ( releasedAt  ) ) inValid = inValid + "releasedAt  "
+        // // if ( !isValid ( reviews ) ) inValid = inValid + "reviews "
+        // if ( !isValid(title) || !isValid(excerpt) ||!isValid(userId) || !isValid(ISBN) || !isValid(category) || !isValid(subcategory)|| !isValid(releasedAt)){
+        //     return res.status(400).send({ status: false, msg: `Enter valid details in following field(s): ${inValid}` })
+        // }
 
         
 

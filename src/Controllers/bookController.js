@@ -7,28 +7,8 @@ const moment = require('moment')
 const createBook = async function (req, res) {
     try {
         let data = req.body
-        
-        
         const { title, excerpt, userId,ISBN, category,subcategory, releasedAt } = data
-//      const printDate = function (){
-//             const today = new Date();
-        
-//         const date = ("Today's Date" +'-'+today.getDate());
-//           const month= ('Month'+'-'+ (today.getMonth()+1));
-//           const year= ('Year'+'-'+ (today.getFullYear()));
 
-// console.log(year+month+date)
-        
-        
-//         }
-        
-//        const printMonth = function(){
-//             const today =  new Date();
-        
-//             const date = ('Month'+'-'+ (today.getMonth()+1));
-//             console.log(date)
-//         }
-   
         if (Object.keys(data).length == 0) {
             return res.status(400).send({ status: false, msg: "Body should not be Empty.. " })
         }
@@ -120,11 +100,12 @@ const createBook = async function (req, res) {
         
          
         if (!releasedAt|| releasedAt.trim() == "")
-        return res.status(400).send({ Status: false, message: "Please provide releasedAt ⚠️⚠️" })
+        return res.status(400).send({ Status: false, message: "Please provide releasedDate ⚠️⚠️" })
     else
         data.releasedAt = data.releasedAt.trim()
 
-       if(!moment(releasedAt,"YYYY-MM-DD",true).isValid())        return res.status(400).send({
+       if(!moment(releasedAt,"YYYY-MM-DD",true).isValid())        
+       return res.status(400).send({
             status:false,
             msg:"Enter a valid date with the format (YYYY-MMMM-DD).",
         })

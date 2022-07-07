@@ -1,19 +1,19 @@
 const express = require('express');
 const router = express.Router();
-
-const userController = require('../Controllers/userController')
-const Authentication = require("../middlewares/authentication")
-const bookController = require('../Controllers/bookController')
+const userController = require('../Controllers/userController.js')
+const bookController = require('../Controllers/bookController.js')
+const { Authentication, Authorization, AuthorizationToQuary} = require("../middlewares/authentication")
 
 router.post("/register", userController.createUser)
 
 router.post("/login", userController.loginUser)
 
-router.post("/books", Authentication.Authentication, bookController.createBook)
-router.get("/books", bookController.getBooks)
+router.post("/books", Authentication, AuthorizationToQuary, bookController.createBook)
 
-router.put("/books/:bookId", bookController.updateBook)
+router.get("/books", Authentication, bookController.getBooks)
 
-router.delete("/books/:bookId", bookController.deleteById)
+router.put("/books/:bookId", Authentication, Authorization, bookController.updateBook)
+
+router.delete("/books/:bookId",  Authentication, Authorization, bookController.deleteById)
 
 module.exports = router;

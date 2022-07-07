@@ -15,8 +15,8 @@ let Authentication = async function (req, res, next) {
 
         jwt.verify(key, "bm-8",((error)=> {
           if(error){return res.status(401).send({status:false, msg:"invalid token recived for authentication"})};
-          next();
-       }))
+          next()}))
+       
   } catch (error) {
     return res.status(500).send({ err: error.message });
   } 

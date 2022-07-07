@@ -110,7 +110,7 @@ const loginUser = async function(req, res){
             {
               id: Email._id.toString(),
             },
-            "Book-management, team No.= 8"
+            "bm-8"
           )
       
           res.setHeader("x-api-key", key)

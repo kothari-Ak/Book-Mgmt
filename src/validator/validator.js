@@ -45,13 +45,19 @@ const isValid = function (value) {
         if(x[i].trim().length !== x[i].length){return false};
     }
     return true;
+  }
+
+  let Valid = function (name) {
+    let regex = /^[.a-zA-Z\s,-]+$/
+    return regex.test(name)
+  }
+
+  function isTitle(x){
+    const regEx = /^\s*(?=[A-Z])*[\w\.\s]{2,64}\s*$/   //It will handle all undefined, null, only numbersNaming, dot, space allowed in between
+    const result = regEx.test(x)
+    return result;
 }
 
-
-let titleValidator = function (title) {
-  let regx = /^[a-zA-z]+([\s][a-zA-Z\,]+)*$/;
-  return regx.test(title);
-}
 
 let ISBNvalidate=function(ISBN){
 let ISBNRegex = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/;
@@ -65,7 +71,8 @@ return ISBNRegex.test(ISBN)
   module.exports.isValidNumber = isValidNumber
   module.exports.isValidEmail = isValidEmail
   module.exports.isArrString=isArrString
-  module.exports.titleValidator=titleValidator
+  module.exports.Valid=Valid
+  module.exports.isTitle=isTitle
   module.exports.ISBNvalidate=ISBNvalidate
   
 

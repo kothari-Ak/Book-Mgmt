@@ -2,11 +2,12 @@ const mongoose  = require("mongoose");
 const bookModel = require("../Models/bookModel")
 const userModel = require("../Models/userModel")
 const validator = require("../validator/validator.js")
-
+const moment = require('moment')
 
 const createBook = async function (req, res) {
     try {
         let data = req.body
+        
         
         const { title, excerpt, userId,ISBN, category,subcategory, releasedAt } = data
 //      const printDate = function (){
@@ -37,7 +38,7 @@ const createBook = async function (req, res) {
     else
         data.title = data.title.trim()
 
-        if(!validator.titleValidator(title)){
+        if(!validator.isTitle(title)){
             return res.status(400).send({ Status: false, message: "Please enter valid title ⚠️⚠️" })
         }
 
@@ -54,6 +55,10 @@ const createBook = async function (req, res) {
         return res.status(400).send({ Status: false, message: "Please provide excerpt ⚠️⚠️" })
     else
         data.excerpt = data.excerpt.trim()
+
+        if(!validator.isValid(excerpt)){
+            return res.status(400).send({ Status: false, message: "Please enter valid excerpt ⚠️⚠️" })
+        }
 
         if (excerpt) {
             let checkExcerpt = await bookModel.findOne({ excerpt: excerpt })
@@ -97,21 +102,33 @@ const createBook = async function (req, res) {
         return res.status(400).send({ Status: false, message: "Please provide category ⚠️⚠️" })
     else
         data.category = data.category.trim()  
+
+        if(!validator.Valid(category)){
+            return res.status(400).send({ Status: false, message: "Please enter valid category ⚠️⚠️" })
+        }
         
         
         if (!subcategory|| subcategory.trim() == "")
         return res.status(400).send({ Status: false, message: "Please provide subcategory ⚠️⚠️" })
     else
         data.subcategory = data.subcategory.trim()
+
+        if(!validator.Valid(subcategory)){
+            return res.status(400).send({ Status: false, message: "Please enter valid subcategory ⚠️⚠️" })
+        }
       
+        
          
         if (!releasedAt|| releasedAt.trim() == "")
         return res.status(400).send({ Status: false, message: "Please provide releasedAt ⚠️⚠️" })
     else
         data.releasedAt = data.releasedAt.trim()
-        // const date=new Date;
-        // const dateTime=  date.toLocaleString()
 
+       if(!moment(releasedAt,"YYYY-MM-DD",true).isValid())        return res.status(400).send({
+            status:false,
+            msg:"Enter a valid date with the format (YYYY-MMMM-DD).",
+        })
+    
      let bookCreated = await bookModel.create(data)
         res.status(201).send({ status: true, data: bookCreated})    }
         catch (err) {

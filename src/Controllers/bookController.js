@@ -142,12 +142,25 @@ const createBook = async function (req, res) {
             subcategory: 1,
             releasedAt: 1,
             reviews: 1,
+          };
+      
+          const findBooks = await bookModel
+            .find({ $and: [getQueryData, { isDeleted: false }] })
+            .select(valueToShow)
+            .sort({ title: 1 });
+      
+          if (findBooks.length == 0) {
+            return res.status(404).send({ status: false, message: "No Book found" });
           }
-        }
-           catch (error) {
+      
+          return res
+            .status(200)
+            .send({ status: true, message: "success", data: findBooks });
+        } catch (error) {
           res.status(500).send({ status: false, message: error.message });
         }
-      }
+      };
+    
       //getBooksDataById
       
       

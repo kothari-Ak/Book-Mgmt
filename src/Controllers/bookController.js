@@ -37,6 +37,10 @@ const createBook = async function (req, res) {
     else
         data.title = data.title.trim()
 
+        if(!validator.titleValidator(title)){
+            return res.status(400).send({ Status: false, message: "Please enter valid title ⚠️⚠️" })
+        }
+
         if (title) {
             let checkTitle = await bookModel.findOne({ title: title })
 
@@ -75,6 +79,10 @@ const createBook = async function (req, res) {
         return res.status(400).send({ Status: false, message: "Please provide ISBN ⚠️⚠️" })
     else
         data.ISBN = data.ISBN.trim()
+
+        if(!validator.ISBNvalidate(ISBN)){
+            return res.status(400).send({ Status: false, message: "Please enter valid ISBN ⚠️⚠️" })
+        }
 
     if (ISBN) {
             let checkISBN = await bookModel.findOne({ ISBN: ISBN })

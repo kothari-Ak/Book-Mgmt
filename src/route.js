@@ -10,6 +10,6 @@ router.post("/login", userController.loginUser)
 router.put("/books/:bookId", bookController.updateBook)
 
 router.delete("/books/:bookId", bookController.deleteById)
-// router.post("/books", bookController.createBook)
+router.post("/books", bookController.createBook)
 
 module.exports = router;

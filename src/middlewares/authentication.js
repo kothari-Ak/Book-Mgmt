@@ -34,9 +34,9 @@ let Authorization = async function (req, res, next) {
     );
     logedinUserID = decodeToken.id;
  
-    requestBookId = req.params.bookId;
+    requestBookId = req.params.bookId.toString()
     if (requestBookId.length != 24)
-      return res.status(400).send({ msg: "enter valid Userid" });
+      return res.status(400).send({ msg: "enter valid bookid" });
 
     findBookID = await bookModel.findOne({ _id: requestBookId  });
     if (!findBookID) return res.status(404).send({ err: "Book not found " });

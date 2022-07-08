@@ -7,28 +7,8 @@ const moment = require('moment')
 const createBook = async function (req, res) {
     try {
         let data = req.body
-        
-        
         const { title, excerpt, userId,ISBN, category,subcategory, releasedAt } = data
-//      const printDate = function (){
-//             const today = new Date();
-        
-//         const date = ("Today's Date" +'-'+today.getDate());
-//           const month= ('Month'+'-'+ (today.getMonth()+1));
-//           const year= ('Year'+'-'+ (today.getFullYear()));
 
-// console.log(year+month+date)
-        
-        
-//         }
-        
-//        const printMonth = function(){
-//             const today =  new Date();
-        
-//             const date = ('Month'+'-'+ (today.getMonth()+1));
-//             console.log(date)
-//         }
-   
         if (Object.keys(data).length == 0) {
             return res.status(400).send({ status: false, msg: "Body should not be Empty.. " })
         }
@@ -120,12 +100,15 @@ const createBook = async function (req, res) {
         
          
         if (!releasedAt|| releasedAt.trim() == "")
-        return res.status(400).send({ Status: false, message: "Please provide releasedAt ⚠️⚠️" })
+        return res.status(400).send({ Status: false, message: "Please provide releasedDate ⚠️⚠️" })
     else
         data.releasedAt = data.releasedAt.trim()
 
        if(!moment(releasedAt,"YYYY-MM-DD",true).isValid())        
-       return res.status(400).send({status:false,msg:"Enter a valid date with the format (YYYY-MMMM-DD).",})
+       return res.status(400).send({
+            status:false,
+            msg:"Enter a valid date with the format (YYYY-MM-DD).",
+        })
     
      let bookCreated = await bookModel.create(data)
         res.status(201).send({ status: true, data: bookCreated})    }
@@ -159,12 +142,25 @@ const createBook = async function (req, res) {
             subcategory: 1,
             releasedAt: 1,
             reviews: 1,
+          };
+      
+          const findBooks = await bookModel
+            .find({ $and: [getQueryData, { isDeleted: false }] })
+            .select(valueToShow)
+            .sort({ title: 1 });
+      
+          if (findBooks.length == 0) {
+            return res.status(404).send({ status: false, message: "No Book found" });
           }
-        }
-           catch (error) {
+      
+          return res
+            .status(200)
+            .send({ status: true, message: "success", data: findBooks });
+        } catch (error) {
           res.status(500).send({ status: false, message: error.message });
         }
-      }
+      };
+    
       //getBooksDataById
       
       
@@ -178,29 +174,39 @@ const updateBook = async function (req, res) {
            
         const book = await bookModel.findById(Id);  
         if(!book || book.isDeleted === true){return res.status(404).send({status:false, msg: "no such book exists"})};//validation1
+        // let {title, ISBN, excerpt} = data
+        // if (!validator.isTitle(title)|| !validator.isValid(title)) { return res.status(400).send({ status: false, message: "please give title to update ⚠️⚠️" }) }
 
         if (data.title) {
             data.title = data.title;
         }
+
+    //     if (!data.title|| data.title.trim() == "")
+    //     return res.status(400).send({ Status: false, message: "please give title to update ⚠️⚠️" })
+    // else
+    //     data.title = data.title.trim()
+
+    //     if(validator.isTitle(data.title)){
+    //         return res.status(400).send({ Status: false, message: "please give title to update ⚠️⚠️" })
+    //     }
+
         if (data.excerpt) {
             data.excerpt = data.excerpt;
         }
         if (data.ISBN) {
             data.ISBN = data.ISBN   
         }
+
+        
+        // if(!mom){
+        //    
+        // }
         const y= req.body.releaseDate
-        if (y) {
-        await bookModel.findByIdAndUpdate(Id, { $set: {releasedAt: Date.now()} }, { new: true });
+        if (validator.mom(y)) {
+        await bookModel.findByIdAndUpdate(Id, { $set: {releasedAt: y} }, { new: true });
+        }else{
+            return res.status(400).send({status:false, msg:"enter date in valid format (YYYY-MM-DD)"})
         }
-
-        const bookFind = await bookModel.findOne({title:req.body.title});
-        if(bookFind){return res.status(404).send({status:false, msg: "Title name already in use"})}
-
-        const ISBNFind = await bookModel.findOne({ISBN:req.body.ISBN});
-        if(ISBNFind){return res.status(404).send({status:false, msg: "ISBN number already in use"})}
-
-
-        const d = new Date; const dateTime = d.toLocaleString();
 
         const updated = await bookModel.findByIdAndUpdate(Id, { $set: {...data} }, { new: true });
         return res.status(200).send({ status: true, data: updated });
@@ -223,9 +229,13 @@ const deleteById = async function(req,res){
     } catch (error) {
         return res.status(500).send({status:false, error: error.name, msg: error.message})
     }
+
+
 }
 
 module.exports.createBook= createBook
 module.exports.updateBook= updateBook
 module.exports.deleteById= deleteById
 module.exports.getBooks=getBooks
+
+

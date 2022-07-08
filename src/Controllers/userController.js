@@ -1,5 +1,6 @@
 const userModel = require("../Models/userModel");
 const jwt = require("jsonwebtoken")
+const Authentication = require("../middlewares/authentication")
 
 const validBody = function (value) {
 
@@ -84,40 +85,57 @@ module.exports.createUser = createUser
 
 
 
-const loginUser = async function(req, res){
-    try{
-        let data = req.body;
-        let { email, password } = data;
+// const loginUser = async function(req, res){
+//     try{
+//         let data = req.body;
+//         let { email, password } = data;
 
-        if (!validRequest(data)) { return res.status(400).send({ status: false, message: "required details (email and password) are missing" }) }
+//         if (!validRequest(data)) { return res.status(400).send({ status: false, message: "required details (email and password) are missing" }) }
 
-        if (!validBody(email)) { return res.status(400).send({ status: false, message: "enter the email" }) }        
+//         if (!validBody(email)) { return res.status(400).send({ status: false, message: "enter the email" }) }        
 
-        if (!validBody(password)) { return res.status(400).send({ status: false, message: "enter the password" }) }
+//         if (!validBody(password)) { return res.status(400).send({ status: false, message: "enter the password" }) }
 
-        if (!validateEmail(email)) { return res.status(400).send({ status: false, message: "enter valid email" }) } 
+//         if (!validateEmail(email)) { return res.status(400).send({ status: false, message: "enter valid email" }) } 
 
-        if (!validatePassword(password)) { return res.status(400).send({ status: false, message: "enter valid password" }) } 
+//         if (!validatePassword(password)) { return res.status(400).send({ status: false, message: "enter valid password" }) } 
 
-        let Email = await userModel.findOne({ email: email })
-        if (!Email) return res.status(400).send({ status: false, message: "user not found" })
+//         let Email = await userModel.findOne({ email: email })
+//         if (!Email) return res.status(400).send({ status: false, message: "user not found" })
 
-        if (Email.password != password)
-        return res.status(401).send({status:false, msg: "invalid password" })
+//         if (Email.password != password)
+//         return res.status(401).send({status:false, msg: "invalid password" })
 
-        let key = jwt.sign(
-            {
-              id: Email._id.toString(),
-            },
-            "Book-management, team No.= 8"
-          )
+//         let key = jwt.sign(
+//             {
+//               id: Email._id.toString(),
+//               project: "Book management"
+//             },
+//             "Book"
+//           )
       
-          res.setHeader("x-api-key", key)
-          res.status(200).send({status:true, key: key })
+//           res.setHeader("x-api-key", key)
+//           res.status(200).send({status:true, key: key })
 
-        } catch (error) {
-          res.status(500).send({ msg: error.message })
-        }
-      };
+//         } catch (error) {
+//           res.status(500).send({ msg: error.message })
+//         }
+//       };
+const login = async function (req, res) {
+    try {
+        const email = req.body.email;
+        const password = req.body.password;
+        if (!email || !password) { return res.status(400).send({ status: false, error: "please enter email and password" }) }; //validation1
 
-      module.exports.loginUser = loginUser
+        const user = await userModel.findOne( {email: email, password: password});
+        if (!user) { return res.status(404).send({ status: false, msg: "invalid userEmail or password" }) }; //validation2
+
+        const token = jwt.sign({ userId: user._id.toString(), collection: "users", project: "Book" }, "topScerect");
+
+        res.setHeader("x-api-key", token);
+        res.status(200).send({ status: true, msg: "congratulations!!! your login is succesful", data:{token} });
+    } catch (err) {
+        return res.status(500).send({ status: false, error: err.name, msg: err.message });
+    }
+}
+      module.exports.login = login

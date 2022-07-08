@@ -243,11 +243,6 @@ const updateBook = async function (req, res) {
         if (y) {
             await bookModel.findByIdAndUpdate(Id, { $set: { releasedAt: y } }, { new: true });
         }
-
-
-
-
-
         const updated = await bookModel.findByIdAndUpdate(Id, { $set: { ...data } }, { new: true });
         return res.status(200).send({ status: true, data: updated });
 

@@ -32,6 +32,7 @@ let Authorization = async function (req, res, next) {
       logedInUserKey,
       "bm-8"
     );
+    console.log(decodeToken)
     logedinUserID = decodeToken.id;
  
     requestBookId = req.params.bookId;
@@ -41,9 +42,11 @@ let Authorization = async function (req, res, next) {
     findBookID = await bookModel.findOne({ _id: requestBookId  });
     if (!findBookID) return res.status(404).send({ err: "Book not found " });
 
-    let userID = findBookID.userId.toString();
 
-    if (logedinUserID != userID)
+
+    let userID = findBookID.userId;
+
+    if (!logedinUserID == userID)
       return res.status(403).send({ msg: "logedin user is not authorized " });
 
     next();

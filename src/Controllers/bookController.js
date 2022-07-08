@@ -163,6 +163,33 @@ const getBooks = async function (req, res) {
 };
 
 //getBooksDataById
+//getBooksDataById-path param
+      //validation for ObjectId
+    const isValidObjectId = function (objectId) {
+        return mongoose.Types.ObjectId.isValid(objectId);
+       }
+ 
+ 
+    const getBooksDataById = async function(req,res){
+         try{
+             let getbookId = req.params.bookId;
+ 
+             if (!isValidObjectId(getbookId)) {
+               return res.status(400).send({ status: false, message: "BookId is in invalid format." })
+             }
+             //try to find book from that id
+             let findBooks = await bookModel.findOne({ _id: getbookId, isDeleted: false }, { deletedAt: 0, __v: 0 });
+         
+             //if doc not found
+             if (!findBooks) {
+               return res.status(404).send({ status: false, message: "Book not found" });
+             }
+             return res.status(200).send({ status: true, message: "success", data: findBooks });
+         } 
+         catch (error) {
+           res.status(500).send({ status: false, message: error.message });
+         }
+       }
 
 
 
@@ -248,3 +275,4 @@ module.exports.createBook = createBook
 module.exports.updateBook = updateBook
 module.exports.deleteById = deleteById
 module.exports.getBooks = getBooks
+module.exports.getBooksDataById = getBooksDataById

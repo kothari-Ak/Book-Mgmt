@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../Controllers/userController.js')
 const bookController = require('../Controllers/bookController.js')
+const reviewController = require('../Controllers/reviewController')
+
 const { Authentication, Authorization, AuthorizationToQuary} = require("../middlewares/authentication")
 
 router.post("/register", userController.createUser)
@@ -17,5 +19,8 @@ router.get("/books/:bookId", Authentication, bookController.getBooksDataById)
 router.put("/books/:bookId", Authentication, Authorization, bookController.updateBook)
 
 router.delete("/books/:bookId",  Authentication, Authorization, bookController.deleteById)
+
+router.put("/books/:bookId/review/:reviewId", reviewController.updateReview)
+
 
 module.exports = router;

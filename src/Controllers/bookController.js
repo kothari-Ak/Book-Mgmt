@@ -107,7 +107,7 @@ const createBook = async function (req, res) {
         if (!moment(releasedAt, "YYYY-MM-DD", true).isValid())
             return res.status(400).send({
                 status: false,
-                msg: "Enter a valid date with the format (YYYY-MMMM-DD).",
+                msg: "Enter a valid date with the format (YYYY-MM-DD).",
             })
 
         let bookCreated = await bookModel.create(data)
@@ -256,7 +256,7 @@ const getBooks = async function (req, res) {
 //     }
 // }
 
-const updateBook = async function (req, res) {
+const updateBook = async function (req, res) { //findOne error
     try {
         const Id = req.params.bookId;
         let data = req.body;
@@ -293,23 +293,23 @@ const updateBook = async function (req, res) {
         }
 
 
-        if (data["releasedate"]) {
-            if (!moment(data.releasedAt, "YYYY-MM-DD", true).isValid())
-                return res.status(400).send({
-                    status: false,
-                    msg: "Enter a valid date with the format (YYYY-MMMM-DD).",
-                })
-            data["releasedate"] = data["releasedate"]
-        }
-
-        const y = req.body.releasedate
+        // if (data["releasedate"]) {
+        //     if (!moment(data.releasedAt, "YYYY-MM-DD", true).isValid())
+        //         return res.status(400).send({
+        //             status: false,
+        //             msg: "Enter a valid date with the format (YYYY-MMMM-DD).",
+        //         })
+        //     data["releasedate"] = data["releasedate"]
+        // }
+        
+        const y = req.body.releaseDate
         if (y) {
             await bookModel.findByIdAndUpdate(Id, { $set: { releasedAt: y } }, { new: true });
-        }
+        
         const updated = await bookModel.findByIdAndUpdate(Id, { $set: { ...data } }, { new: true });
         return res.status(200).send({ status: true, data: updated });
 
-    } catch (err) {
+    }} catch (err) {
         return res.status(500).send({ status: false, error: err.name, msg: err.message })
     }
 }

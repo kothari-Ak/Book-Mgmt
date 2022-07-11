@@ -14,6 +14,7 @@ const validBody = function (value) {
 
 }
 
+
 let nameValidator = function (name) {
     let regx = /^[a-zA-z]+([\s][a-zA-Z\,]+)*$/;
     return regx.test(name);
@@ -122,3 +123,4 @@ const loginUser = async function (req, res) {
 };
 
 module.exports.loginUser = loginUser
+module.exports.validBody=validBody

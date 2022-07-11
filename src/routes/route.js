@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 const userController = require('../Controllers/userController.js')
-const Authentication = require("../middlewares/authentication.js")
 const bookController = require('../Controllers/bookController.js')
-const reviewController = require('../Controllers/reviewController.js')
+const reviewController = require('../Controllers/reviewController')
+//const { Authentication, Authorization, AuthorizationToQuary} = require("../middlewares/authentication")
 
 router.post("/register", userController.createUser)
 
@@ -21,6 +21,8 @@ router.put("/books/:bookId",  bookController.updateBook)
 router.delete("/books/:bookId", bookController.deleteById)
 
 router.post("/books/:bookId/review", reviewController.createReview)
+
+router.put("/books/:bookId/review/:reviewId", reviewController.updateReview)
 
 module.exports = router;
 
@@ -49,4 +51,3 @@ module.exports = router;
 
 // router.post("/books/:bookId/review", reviewController.createReview)
 
-// module.exports = router;

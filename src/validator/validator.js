@@ -1,8 +1,11 @@
-const isValid = function (value) {
-  if (typeof value === "undefined" || value === null) return false;
-  if (typeof value === "string" && value.trim().length === 0) return false;
-  return true
-}
+const moment = require('moment')
+
+
+const isValid = function (value){
+    if (typeof value === "undefined" || value === null) return false;
+    if (typeof value === "string" && value.trim().length === 0) return false;
+    return true
+  }
 
 const isValidUrl = function (value) {
   const regEx = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/
@@ -63,6 +66,11 @@ let ISBNvalidate = function (ISBN) {
   return ISBNRegex.test(ISBN)
 }
 
+let validateRating = (rating) => {
+  var rate = /^(?=.*?[0-5])$/
+  return rate.test(rating)}
+
+
 
 
 module.exports.isValid = isValid
@@ -75,3 +83,4 @@ module.exports.isArrString = isArrString
 module.exports.Valid = Valid
 module.exports.isTitle = isTitle
 module.exports.ISBNvalidate = ISBNvalidate
+module.exports.validateRating= validateRating

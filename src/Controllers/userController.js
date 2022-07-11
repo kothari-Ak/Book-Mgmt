@@ -91,18 +91,18 @@ const loginUser = async function (req, res) {
         let data = req.body;
         let { email, password } = data;
 
-        if (!validRequest(data)) { return res.status(400).send({ status: false, message: "required details (email and password) are missing" }) }
+//         if (!validRequest(data)) { return res.status(400).send({ status: false, message: "required details (email and password) are missing" }) }
 
         if (!validBody(email)) { return res.status(400).send({ status: false, message: "enter the email" }) }
 
-        if (!validBody(password)) { return res.status(400).send({ status: false, message: "enter the password" }) }
+//         if (!validBody(password)) { return res.status(400).send({ status: false, message: "enter the password" }) }
 
         if (!validateEmail(email)) { return res.status(400).send({ status: false, message: "enter valid email" }) }
 
         if (!validatePassword(password)) { return res.status(400).send({ status: false, message: "enter valid password" }) }
 
-        let Email = await userModel.findOne({ email: email })
-        if (!Email) return res.status(400).send({ status: false, message: "user not found" })
+//         let Email = await userModel.findOne({ email: email })
+//         if (!Email) return res.status(400).send({ status: false, message: "user not found" })
 
         if (Email.password != password)
             return res.status(401).send({ status: false, msg: "invalid password" })
@@ -123,4 +123,3 @@ const loginUser = async function (req, res) {
 };
 
 module.exports.loginUser = loginUser
-module.exports.validBody=validBody

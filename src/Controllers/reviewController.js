@@ -13,21 +13,23 @@ const createReview = async function (req, res) {
          return res.status(400).send({ status: false, msg: "no content in the document" });
       }
       const bookId= req.params.bookId
-      const bodyBook= req.body.bookId
+      // const bodyBook= req.body.bookId
       if (!mongoose.Types.ObjectId.isValid(bookId)) { return res.status(400).send({ status: false, msg: "enter a valid id" }) }
-      if (!mongoose.Types.ObjectId.isValid(bodyBook)) { return res.status(400).send({ status: false, msg: "enter a valid id" }) }
+      // if (!mongoose.Types.ObjectId.isValid(bodyBook)) { return res.status(400).send({ status: false, msg: "enter a valid id" }) }
 
       const book = await bookModel.findById(bookId);  
       if(!book || book.isDeleted === true){return res.status(404).send({status:false, msg: "no such book exists"})};
 
-      if(bookId !== bodyBook){
-        return res.status(400).send({ status: false, msg: "bookId should be the same" })
-      }else{
-        const savedData = await reviewModel.create(content);
+      // if(bookId !== bodyBook){
+      //   return res.status(400).send({ status: false, msg: "bookId should be the same" })
+      // }else{
+     let rBy= req.body.reviewedBy;
+     let rAt= req.body.reviewedAt;
+     let rat= req.body.rating;
+     let rev= req.body.review
+         let v= {bookId: req.params.bookId ,reviewedBy: rBy,reviewedAt: rAt, rating: rat,review: rev}
+        const savedData = await reviewModel.create(v);
         res.status(201).send({ status: true, data: savedData })
-      }
-
-
       
    } catch (error) {
       console.log(error)

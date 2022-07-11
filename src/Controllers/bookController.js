@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 const bookModel = require("../Models/bookModel")
 const userModel = require("../Models/userModel")
 const validator = require("../validator/validator.js")
-const moment = require('moment')
+const moment = require('moment');
+const reviewModel = require("../Models/reviewModel");
 
 const createBook = async function (req, res) {
     try {
@@ -121,8 +122,9 @@ const createBook = async function (req, res) {
 const getBooks = async function (req, res) {
     try {
         let getQueryData = req.query;
+        // let getbookId= req.query.bookId;
 
-        const { userId, category, subcategory } = getQueryData;
+        const { userId, category, subcategory } = getQueryData; //bookId
 
         if (Object.keys(getQueryData).length > 0) {
             if (!userId && !category && !subcategory) {
@@ -132,6 +134,9 @@ const getBooks = async function (req, res) {
                 });
             }
         }
+        // let getReviews = await reviewModel.find({bookId: getbookId, isDeleted: false}).select({_id:1, bookId:1, reviewedBy:1, reviewedAt:1, rating:1, review:1});
+       
+        // let updateReviewCount= await reviewModel.count({bookId: getbookId, isDeleted:false})
 
         //value which will show in response
         let valueToShow = {
@@ -144,19 +149,16 @@ const getBooks = async function (req, res) {
             releasedAt: 1,
             reviews: 1,
         };
-
-        const findBooks = await bookModel
-            .find({ $and: [getQueryData, { isDeleted: false }] })
-            .select(valueToShow)
-            .sort({ title: 1 });
+            //reviews: updateReviewCount,
+            //reviewsData: getReviews,
+       
+        const findBooks = await bookModel.find({ $and: [getQueryData, { isDeleted: false }] }).select(valueToShow).sort({ title: 1 });
 
         if (findBooks.length == 0) {
             return res.status(404).send({ status: false, message: "No Book found" });
         }
 
-        return res
-            .status(200)
-            .send({ status: true, message: "success", data: findBooks });
+        return res.status(200).send({ status: true, message: "success", data: findBooks });
     } catch (error) {
         res.status(500).send({ status: false, message: error.message });
     }
@@ -164,35 +166,38 @@ const getBooks = async function (req, res) {
 
 //getBooksDataById
 //getBooksDataById-path param
+
 //validation for ObjectId
-const isValidObjectId = function (objectId) {
-    return mongoose.Types.ObjectId.isValid(objectId);
-}
-
-
-const getBooksDataById = async function (req, res) {
-    try {
-        let getbookId = req.params.bookId;
-
-        if (!isValidObjectId(getbookId)) {
-            return res.status(400).send({ status: false, message: "BookId is in invalid format." })
-        }
-        //try to find book from that id
-        let findBooks = await bookModel.findOne({ _id: getbookId, isDeleted: false }, { deletedAt: 0, __v: 0 });
-
-        //if doc not found
-        if (!findBooks) {
-            return res.status(404).send({ status: false, message: "Book not found" });
-        }
-        return res.status(200).send({ status: true, message: "success", data: findBooks });
-    }
-    catch (error) {
-        res.status(500).send({ status: false, message: error.message });
-    }
-}
-
-
-
+    const isValidObjectId = function (objectId) {
+        return mongoose.Types.ObjectId.isValid(objectId);
+       }
+ 
+ 
+    const getBooksDataById = async function(req,res){
+         try{
+             let getbookId = req.params.bookId;
+ 
+             if (!isValidObjectId(getbookId)) {
+               return res.status(400).send({ status: false, message: "BookId is in invalid format." })
+             }
+             //try to find book from that id
+             let findBooks = await bookModel.findOne({ _id: getbookId, isDeleted: false }, { deletedAt: 0, __v: 0 });
+         
+             let getReviews = await reviewModel.find({bookId: getbookId, isDeleted: false}).select({_id:1, bookId:1, reviewedBy:1, reviewedAt:1, rating:1, review:1});
+             //if doc not found
+            
+             let updateReviewCount= await reviewModel.count({bookId: getbookId, isDeleted:false})
+            
+             const commbinedDetails = { _id: findBooks._id , title: findBooks.title , excerpt: findBooks.excerpt, userId: findBooks.userId, category: findBooks.category, subcategory: findBooks.subcategory, isDeleted: findBooks.isDeleted, reviews: updateReviewCount, releasedAt: findBooks.releasedAt, createdAt:findBooks.createdAt, updatedAt: findBooks.updatedAt , reviewsData: getReviews }
+             if (!findBooks) {
+               return res.status(404).send({ status: false, message: "Book not found" });
+             }
+             return res.status(200).send({ status: true, message: "Books list", data: commbinedDetails});
+         } 
+         catch (error) {
+           res.status(500).send({ status: false, message: error.message });
+         }
+       }
 
 
 const updateBook = async function (req, res) {
@@ -241,13 +246,13 @@ const updateBook = async function (req, res) {
 
         }
 
-        if (data.releasedAt) {
-            if (!moment(data.releasedAt, "YYYY-MM-DD", true).isValid()) {
-                return res.status(400).send({
-                    status: false, msg: "Enter a valid date with the format (YYYY-MMMM-DD).",
-                })
-            }
-            data.releasedAt = data.releasedAt
+
+        const y = req.body["release date"]
+        if (y) {
+            if (!moment(data["release date"], "YYYY-MM-DD", true).isValid())
+        return res.status(400).send({status: false, msg: "Enter a valid date with the format (YYYY-MM-DD).",
+        })
+        await bookModel.findByIdAndUpdate(Id, { $set: { releasedAt: y } }, { new: true });
         }
         const updated = await bookModel.findByIdAndUpdate(Id, { $set: { ...data } }, { new: true });
         return res.status(200).send({ status: true, data: updated });
@@ -257,6 +262,7 @@ const updateBook = async function (req, res) {
         return res.status(500).send({ status: false, error: err.name, msg: err.message })
     }
 }
+
 
 
 const deleteById = async function (req, res) {

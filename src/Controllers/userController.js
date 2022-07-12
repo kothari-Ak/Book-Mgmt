@@ -1,6 +1,6 @@
 const userModel = require("../Models/userModel");
 const jwt = require("jsonwebtoken")
-const Authentication = require("../middlewares/authentication")
+
 
 const validBody = function (value) {
 
@@ -43,7 +43,7 @@ let validatePassword = (password) => {
 const createUser = async function (req, res) {
     try {
         let data = req.body
-        let { title, name, phone, email, password, address } = data
+        let { title, name, phone, email, password} = data
 
         if (!validRequest(data)) { return res.status(400).send({ status: false, message: "body can't be empty" }) }
 
@@ -101,8 +101,8 @@ const loginUser = async function (req, res) {
 
         if (!validatePassword(password)) { return res.status(400).send({ status: false, message: "enter valid password" }) }
 
-//         let Email = await userModel.findOne({ email: email })
-//         if (!Email) return res.status(400).send({ status: false, message: "user not found" })
+        let Email = await userModel.findOne({ email: email })
+        if (!Email) return res.status(400).send({ status: false, message: "user not found" })
 
         if (Email.password != password)
             return res.status(401).send({ status: false, msg: "invalid password" })

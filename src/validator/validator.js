@@ -1,11 +1,11 @@
-const moment = require('moment')
+const isValid = function (value) {
+  if (typeof value === "undefined" || value === null) return false;
+  if (typeof value === "string" && value.trim().length === 0) return false;
+  return true
+}
 
 
-const isValid = function (value){
-    if (typeof value === "undefined" || value === null) return false;
-    if (typeof value === "string" && value.trim().length === 0) return false;
-    return true
-  }
+
 
 const isValidUrl = function (value) {
   const regEx = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/
@@ -55,21 +55,20 @@ let Valid = function (name) {
 }
 
 function isTitle(x) {
-  const regEx = /^\s*(?=[A-Z])*[\w\.\s]{2,64}\s*$/   //It will handle all undefined, null, only numbersNaming, dot, space allowed in between
+   const regEx =/^\s*(?=[A-Z])*[\w\.\s]{2,64}\s*$/ 
+  
+
+  //It will handle all undefined, null, only numbersNaming, dot, space allowed in between
   const result = regEx.test(x)
   return result;
 }
 
 
 let ISBNvalidate = function (ISBN) {
-  let ISBNRegex = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/;
+  let ISBNRegex = // /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/;
+  /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/
   return ISBNRegex.test(ISBN)
 }
-
-let validateRating = (rating) => {
-  var rate = /^(?=.*?[0-5])$/
-  return rate.test(rating)}
-
 
 
 
@@ -83,4 +82,3 @@ module.exports.isArrString = isArrString
 module.exports.Valid = Valid
 module.exports.isTitle = isTitle
 module.exports.ISBNvalidate = ISBNvalidate
-module.exports.validateRating= validateRating

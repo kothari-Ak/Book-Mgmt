@@ -6,6 +6,19 @@ const validator = require("../validator/validator.js")
 const moment = require('moment');
 const reviewModel = require("../Models/reviewModel");
 
+const validBody = function (value) {
+
+    if (typeof value === 'undefined' || value === null) {
+        return false
+    }
+    if (typeof value === 'string' && value.trim().length == 0) {
+        return false
+    }
+  
+    return true
+
+}
+
 
 
 const createBook = async function (req, res) {
@@ -44,13 +57,7 @@ const createBook = async function (req, res) {
             return res.status(400).send({ Status: false, message: "Please enter valid excerpt ⚠️⚠️" })
         }
 
-        if (excerpt) {
-            let checkExcerpt = await bookModel.findOne({ excerpt: excerpt })
-
-            if (checkExcerpt) {
-                return res.status(400).send({ Status: false, message: "Please provide another excerpt, this excerpt has been used ⚠️⚠️" })
-            }
-        }
+       
 
         if (!userId || userId.trim() == "")
             return res.status(400).send({ Status: false, message: "Please provide userId ⚠️⚠️" })
@@ -58,11 +65,13 @@ const createBook = async function (req, res) {
             data.userId = data.userId.trim()
 
         let UserId = data.userId
+        
         let FindId = await userModel.findById(UserId)
         if (!FindId) return res.status(400).send({ status: false, msg: 'UserId does not exist' })
 
         if (!FindId.length == 24)
             return res.status(400).send({ status: false, msg: 'UserId is not valid' })
+
 
         if (!ISBN || ISBN.trim() == "")
             return res.status(400).send({ Status: false, message: "Please provide ISBN ⚠️⚠️" })
@@ -139,7 +148,7 @@ const updateBook = async function (req, res) {
             if (checkTitle) {
                 return res.status(400).send({ Status: false, message: "Please provide another title, this title has been used ⚠️⚠️" })
             }
-            data.title = data.title;
+            data.title = (data.title).trim();
         }
 
 
@@ -147,11 +156,8 @@ const updateBook = async function (req, res) {
             if (!validator.isValid(data.excerpt)) {
                 return res.status(400).send({ Status: false, message: "Please enter valid excerpt ⚠️⚠️" })
             }
-            let checkExcerpt = await bookModel.findOne({ title: data.excerpt })
-            if (checkExcerpt) {
-                return res.status(400).send({ Status: false, message: "Please provide another title, this excerpt has been used ⚠️⚠️" })
-            }
-            data.excerpt = data.excerpt;
+            
+            data.excerpt = (data.excerpt).trim();
         }
 
 
@@ -164,12 +170,12 @@ const updateBook = async function (req, res) {
             if (checkISBN) {
                 return res.status(400).send({ Status: false, message: "Please provide another title, this title has been used ⚠️⚠️" })
             }
-            data.ISBN = data.ISBN
+            data.ISBN = (data.ISBN).trim()
 
         }
 
 
-        const y = req.body["release date"]
+        const y = data["release date"]
         if (y) {
             if (!moment(data["release date"], "YYYY-MM-DD", true).isValid())
         return res.status(400).send({status: false, msg: "Enter a valid date with the format (YYYY-MM-DD).",
@@ -184,6 +190,9 @@ const updateBook = async function (req, res) {
         return res.status(500).send({ status: false, error: err.name, msg: err.message })
     }
 }
+        
+
+     
 
 const getBooks = async function (req, res) {
     try {

@@ -43,14 +43,6 @@ const createBook = async function (req, res) {
             return res.status(400).send({ Status: false, message: "Please enter valid excerpt ⚠️⚠️" })
         }
 
-        if (excerpt) {
-            let checkExcerpt = await bookModel.findOne({ excerpt: excerpt })
-
-            if (checkExcerpt) {
-                return res.status(400).send({ Status: false, message: "Please provide another excerpt, this excerpt has been used ⚠️⚠️" })
-            }
-        }
-
         if (!userId || userId.trim() == "")
             return res.status(400).send({ Status: false, message: "Please provide userId ⚠️⚠️" })
         else
@@ -189,6 +181,7 @@ const getBooks = async function (req, res) {
              //if doc not found
             
              let updateReviewCount= await reviewModel.count({bookId: getbookId, isDeleted:false})
+
             
              const combinedDetails = { _id: findBooks._id , title: findBooks.title , excerpt: findBooks.excerpt, userId: findBooks.userId, category: findBooks.category, subcategory: findBooks.subcategory, isDeleted: findBooks.isDeleted, reviews: updateReviewCount, releasedAt: findBooks.releasedAt, createdAt:findBooks.createdAt, updatedAt: findBooks.updatedAt , reviewsData: getReviews }
              if (!findBooks) {

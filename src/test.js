@@ -87,3 +87,14 @@
 //   };
   
 //   module.exports.updateBooks = updateBooks;
+
+// expired rtoken?
+// in get books
+// review data 
+// isdeleted: true error check
+// book id doesn't exist if param id don't match
+// post review
+//valid messages in every key, status shoudl be 400
+//put review
+//invalid bookid and review id conditon
+//delete review same issuse

@@ -5,7 +5,7 @@ const mongoose  = require("mongoose");
 
 
 //authentication
-const checkLogin = function (req, res, next) {
+const Authentication = function (req, res, next) {
   try {
     let key = req.headers["x-api-key"];
     if (!key) key = req.headers["X-Api-Key"];
@@ -85,6 +85,6 @@ let AuthorizationToQuary= async function (req, res, next) {
 }; 
 
 
-module.exports.checkLogin = checkLogin
+module.exports.Authentication = Authentication
 module.exports.Authorization = Authorization
 module.exports.AuthorizationToQuary=AuthorizationToQuary

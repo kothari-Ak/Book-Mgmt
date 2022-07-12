@@ -263,11 +263,11 @@ const getBooks = async function (req, res) {
             
              let updateReviewCount= await reviewModel.count({bookId: getbookId, isDeleted:false})
             
-             const commbinedDetails = { _id: findBooks._id , title: findBooks.title , excerpt: findBooks.excerpt, userId: findBooks.userId, category: findBooks.category, subcategory: findBooks.subcategory, isDeleted: findBooks.isDeleted, reviews: updateReviewCount, releasedAt: findBooks.releasedAt, createdAt:findBooks.createdAt, updatedAt: findBooks.updatedAt , reviewsData: getReviews }
+             const combinedDetails = { _id: findBooks._id , title: findBooks.title , excerpt: findBooks.excerpt, userId: findBooks.userId, category: findBooks.category, subcategory: findBooks.subcategory, isDeleted: findBooks.isDeleted, reviews: updateReviewCount, releasedAt: findBooks.releasedAt, createdAt:findBooks.createdAt, updatedAt: findBooks.updatedAt , reviewsData: getReviews }
              if (!findBooks) {
                return res.status(404).send({ status: false, message: "Book not found" });
              }
-             return res.status(200).send({ status: true, message: "Books list", data: commbinedDetails});
+             return res.status(200).send({ status: true, message: "Books list", data: combinedDetails});
          } 
          catch (error) {
            res.status(500).send({ status: false, message: error.message });

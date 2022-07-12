@@ -24,7 +24,7 @@ const createReview = async function (req, res) {
       //   return res.status(400).send({ status: false, msg: "bookId should be the same" })
       // }else{
      let rBy= req.body.reviewedBy;
-     let rAt= req.body.reviewedAt;
+     let rAt= req.body.reviewedAt; 
      let rat= req.body.rating;
      let rev= req.body.review
          let v= {bookId: req.params.bookId ,reviewedBy: rBy,reviewedAt: rAt, rating: rat,review: rev}
@@ -77,16 +77,16 @@ let reviewedByValidator = function (reviewedBy) {
 
         
 
-        if (data.reviewedBy){
+        if (reviewedBy){
             data.reviewedBy = data.reviewedBy;
         }
         
-        if (data.rating) {
+        if (rating) {
         
             data.rating = data.rating;
         }
         
-        if (data.review) {
+        if (review) {
         data.review = data.review
             }
                                                   

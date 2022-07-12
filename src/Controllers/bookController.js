@@ -131,15 +131,17 @@ const createBook = async function (req, res) {
     }
 }
 
+
 const updateBook = async function (req, res) {
     try {
         const Id = req.params.bookId;
         let data = req.body;
+     
         if (Object.keys(data).length === 0) { return res.status(400).send({ status: false, msg: "cannot update empty body" }) };   //validation1
-
+        
         const book = await bookModel.findById(Id);
         if (!book || book.isDeleted === true) { return res.status(404).send({ status: false, msg: "no such book exists" }) };//validation1
-
+        // if(isValidData(data)){
         if (data.title) {
             if (!validator.isTitle(data.title)) {
                 return res.status(400).send({ Status: false, message: "Please enter valid title ⚠️⚠️" })
@@ -162,7 +164,8 @@ const updateBook = async function (req, res) {
 
 
         if (data.ISBN) {
-
+            
+            
             if (!validator.ISBNvalidate(data.ISBN)) {
                 return res.status(400).send({ Status: false, message: "Please enter valid ISBN ⚠️⚠️" })
             }
@@ -175,9 +178,9 @@ const updateBook = async function (req, res) {
         }
 
 
-        const y = data["release date"]
+        const y = data.releasedAt
         if (y) {
-            if (!moment(data["release date"], "YYYY-MM-DD", true).isValid())
+            if (!moment(data.releasedAt, "YYYY-MM-DD", true).isValid())
         return res.status(400).send({status: false, msg: "Enter a valid date with the format (YYYY-MM-DD).",
         })
         await bookModel.findByIdAndUpdate(Id, { $set: { releasedAt: y } }, { new: true });

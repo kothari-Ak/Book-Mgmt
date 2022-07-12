@@ -65,10 +65,18 @@ function isTitle(x) {
 
 
 let ISBNvalidate = function (ISBN) {
-  let ISBNRegex = // /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/;
-  /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/
+  let ISBNRegex = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)/
+  
   return ISBNRegex.test(ISBN)
 }
+
+let ISBNvalidate2=function(ISBN){
+  let regex=/^.{10,13}$/
+  return regex.test(ISBN)
+}
+
+
+
 
 
 
@@ -82,3 +90,4 @@ module.exports.isArrString = isArrString
 module.exports.Valid = Valid
 module.exports.isTitle = isTitle
 module.exports.ISBNvalidate = ISBNvalidate
+module.exports.ISBNvalidate2 = ISBNvalidate2

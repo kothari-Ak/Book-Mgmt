@@ -54,7 +54,7 @@ let Valid = function (name) {
   return regex.test(name)
 }
 
-function isTitle(x) {
+let isTitle = function isTitle(x) {
   const regEx = /^\s*(?=[A-Z])*[\w\.\s]{2,64}\s*$/   //It will handle all undefined, null, only numbersNaming, dot, space allowed in between
   const result = regEx.test(x)
   return result;
@@ -70,6 +70,10 @@ let validateRating = (rating) => {
   var rate = /^(?=.*?[0-5])$/
   return rate.test(rating)}
 
+  let validateExcerpt = (excerpt) => {
+    const rev = /^\s*(?=[A-Z0-9])*[\w\.\s]{1,1000}\s*$/
+    return rev.test(excerpt)
+}
 
 
 
@@ -84,3 +88,4 @@ module.exports.Valid = Valid
 module.exports.isTitle = isTitle
 module.exports.ISBNvalidate = ISBNvalidate
 module.exports.validateRating= validateRating
+module.exports.validateExcerpt = validateExcerpt

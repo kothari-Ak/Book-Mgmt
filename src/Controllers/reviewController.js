@@ -67,7 +67,7 @@ const createReview = async function (req, res) {
 
         let{ reviewedBy, rating, review} = data
 
-        const book = await bookModel.findOne({_id: bookId});
+        const book = await bookModel.findOne({_id: bookId, isDeleted: false});
         if (!book || book.isDeleted === true) { return res.status(404).send({ status: false, msg: "no such book exists" }) };
 
         // if(book.length != 24){return res.status(400).semd({status: false, msg: "enter valid bookId"})} 
@@ -92,20 +92,15 @@ const createReview = async function (req, res) {
         if (data.review) {
         data.review = data.review
             }
-         
-        let findBooks = await bookModel.findOne({ _id: bookId, isDeleted: false }, { deletedAt: 0, __v: 0 });
-        
-        let updateReviewCount= await reviewModel.count({bookId: bookId, isDeleted:false})    
 
         const ReviewBookCheck = await reviewModel.findOne({ _id: reviewID, bookId: bookId, isDeleted: false })
  
         if (!ReviewBookCheck) { return res.status(404).send({ status: false, msg: "review not matching with the given book" }) }
         else
-        {const combinedDetails = { _id: findBooks._id , title: findBooks.title , excerpt: findBooks.excerpt, userId: findBooks.userId, category: findBooks.category, subcategory: findBooks.subcategory, isDeleted: findBooks.isDeleted, reviews: updateReviewCount, releasedAt: findBooks.releasedAt, createdAt:findBooks.createdAt, updatedAt: findBooks.updatedAt , reviewsData: getReviews }
-        
-        return res.status(200).send({ status: true, message: "Books list", data: combinedDetails});}
-        
-
+        {const update = await reviewModel.findByIdAndUpdate( reviewID, { $set: { ...data } }, { new: true });
+        const combinedDetails = await bookModel.findById(bookId, data)
+        return res.status(200).send({ status: true, books: combinedDetails });
+         }
 
     }catch(error){
         return res.status(500).send({status:false, error: error.name, msg:error.msg})

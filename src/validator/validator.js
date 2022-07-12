@@ -1,5 +1,5 @@
 const moment = require('moment')
-
+const mongoose  = require("mongoose");
 
 const isValid = function (value){
     if (typeof value === "undefined" || value === null) return false;
@@ -83,6 +83,9 @@ let validateRating = (rating) => {
       return result;
   }
   
+  const isValidDate = function (Date) {
+    if (/^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/.test(Date)) return true
+}
 
 module.exports.isValid = isValid
 module.exports.isValidUrl = isValidUrl
@@ -95,34 +98,90 @@ module.exports.Valid = Valid
 module.exports.isTitle = isTitle
 module.exports.ISBNvalidate = ISBNvalidate
 module.exports.validateRating= validateRating
+module.exports.isValidDate= isValidDate
+module.exports.isName= isName
 
 
-const validateToUpdate = async function (req, res, next) {
-  try {
-      const data = req.body;
-      if(Object.keys(data).length === 0){return res.status(400).send({status:false, error : "can't update blog without any key-values"})}
 
-      if(data.title){
-          if (!isName(data.title)) { return res.status(400).send({ status: false, message: "title is can be alphnumeric with atleast 1st letter as uppercase, special chraracters not allowed except dot(.)" }) };
-          data.title = data.title.trim();   //updating trimmed value of title in request body
-      }
+// const validateToUpdate = async function (req, res, next) {
+//   try {
+//       const data = req.body;
+//       if (Object.keys(data).length === 0) { return res.status(400).send({ status: false, msg: "cannot update empty body" }) };
+// const {title, excerpt, releasedAt}= data
+//       if(title || excerpt|| releasedAt ){
+//           if (!isName(data.title.trim())) { return res.status(400).send({ status: false, message: "title is can be alphnumeric with atleast 1st letter as uppercase, special chraracters not allowed except dot(.)" }) };
+//    //updating trimmed value of title in request body
       
-      if(data.title){
-        if (!isValid(data.title)) { return res.status(400).send({ status: false, message: "title cannot be empty." }) };
-        data.title = data.title.trim();   //updating trimmed value of title in request body
-    }
-     
-    if(data.excerpt){
-          if (!isBody(data.body)) { return res.status(400).send({ status: false, msg: "body must contains alphabets" }) };
-      }
-      if(data.ISBN){
-          if (!ISBNvalidate(data.ISBN)) { return res.status(400).send({ status: false, msg: "please provide a valid ISBN number." }) };  //also validates for undefined and null cases
-      }
-      next();
-  } catch (error) {
-      console.log(error)
-     return res.status(500).send({ status: false, error: error.name, msg: error.message })
-  }
-}
+      
+//      if (!isBody(data.excerpt.trim())) { return res.status(400).send({ status: false, msg: "excerpt body must have some content to update" }) };
+    
+//      if (!isValidDate(data.releasedAt.trim())) { return res.status(400).send({ status: false, msg: "please provide a date in the form of YYYY-MM-DD" }) };
+    
+//           if (!ISBNvalidate(data.ISBN.trim())) { return res.status(400).send({ status: false, msg: "please provide a valid ISBN number." }) };  //also validates for undefined and null cases
+//       }else{
+//         return res.status(400).send({ status: false, msg: "please provide title, excerpt, releasedAt to update"})
+//       }
+//       next();
+//   } catch (error) {
+//       console.log(error)
+//      return res.status(500).send({ status: false, error: error.name, msg: error.message })
+//   }
+// }
 
-module.exports.validateToUpdate=validateToUpdate
+
+
+
+// // let reviewedByValidator = function (reviewedBy) {
+// //       let regx = /^[a-zA-z]+([\s][a-zA-Z\,]+)*$/;
+// //       return regx.test(reviewedBy);
+// //   }
+
+// //   const isValidReview = function (review) {
+// //       const regEx = /^\s*([a-zA-Z0-9\s\,\.]){1,10000}\s*$/
+// //       const result = regEx.test(review)
+// //       return result
+// //     }
+
+   
+
+
+
+// const revUpdate = async function (req, res, next) {
+//   try {
+//       const data = req.body;
+//       let reviewID = req.params.reviewId
+//       let bookID = req.params.bookId
+      
+//       if (Object.keys(data).length === 0) { return res.status(400).send({ status: false, msg: "cannot update empty body" }) };
+
+//       if (!mongoose.Types.ObjectId.isValid(bookID)) { return res.status(400).send({ status: false, msg: "enter a valid book id" }) }
+
+//       if (!mongoose.Types.ObjectId.isValid(reviewID)) { return res.status(400).send({ status: false, msg: "enter a valid review id" }) }
+
+//       if(!bookID && !reviewID){return res.status(400).send({status: false, msg: "bookID or reviewID missing in params"})}
+      
+//       const {reviewedBy ,review , reviewedAt, rating} = data;
+
+//       if (reviewedBy || review || reviewedAt|| rating){
+//       if (!isName(data.reviewedBy)) { return res.status(400).send({ status: false, message: " reviewedBy can be alphnumeric with atleast 1st letter as uppercase, special chraracters not allowed except dot(.)" }) };
+//    //updating trimmed value of title in request body
+      
+      
+//      if (!isBody(data.review)) { return res.status(400).send({ status: false, msg: "please write a review for the book." }) };
+    
+//      if (!isValidDate(data.reviewedAt)) { return res.status(400).send({ status: false, msg: "please provide a date in the form of YYYY-MM-DD" }) };
+    
+//      if (!validateRating(data.rating)) { return res.status(400).send({ status: false, msg: "please provide a rating between 1 to 5." }) };  //also validates for undefined and null cases
+//       }
+//       else{
+//         return res.status(400).send({ status: false, msg: "please provide reviewedBy, review, releasdeAt, rating or atleast one field to update."})
+//       }
+//       next();
+//   } catch (error) {
+//       console.log(error)
+//      return res.status(500).send({ status: false, error: error.name, msg: error.message })
+//   }
+// }
+
+// module.exports.validateToUpdate=validateToUpdate
+// module.exports.revUpdate=revUpdate

@@ -81,9 +81,6 @@ const createUser = async function (req, res) {
     }
 }
 
-module.exports.createUser = createUser
-
-
 
 const loginUser = async function (req, res) {
     try {
@@ -104,27 +101,16 @@ const loginUser = async function (req, res) {
         if (!Email) return res.status(400).send({ status: false, message: "user not found" })
 
         if (Email.password != password)
-            return res.status(401).send({ status: false, msg: "invalid password" })
-            
-            const iat = Date.now()
-            const exp = (iat) + (24 * 60 * 60 * 1000)
-            let key = jwt.sign(
-               {
-                  id: Email._id.toString(),
-                  iat: iat,
-                  exp: exp
-               },
-               "bm-8"
-            );
-      
-      
-            // let key = jwt.sign(
-        //     {
-        //         id: Email._id.toString(),
-        //     },
-        //     "bm-8"
-        // )
+            return res.status(401).send({ status: false, msg: "invalid password" })    
 
+            let key = jwt.sign(
+            {
+                id: Email._id.toString(),
+                iat: iat,
+                iat:Math.floor(new Date().getTime()/1000)},
+                "bm-8",{expiresIn:"3h"});
+        
+        
         res.setHeader("x-api-key", key)
         res.status(200).send({ status: true, key: key })
 
@@ -133,4 +119,5 @@ const loginUser = async function (req, res) {
     }
 };
 
+module.exports.createUser = createUser
 module.exports.loginUser = loginUser

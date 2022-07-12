@@ -16,6 +16,16 @@ let reviewedByValidator = function (reviewedBy) {
         return regx.test(reviewedBy);
     }
 
+    const isValidReview = function (review) {
+        const regEx = /^\s*([a-zA-Z0-9\s\,\.]){1,10000}\s*$/
+        const result = regEx.test(review)
+        return result
+      }
+
+      const isValidDate = function (Date) {
+        if (/^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/.test(Date)) return true
+    }
+
 const createReview = async function (req, res) {
    try {
       const content = req.body;
@@ -30,9 +40,7 @@ const createReview = async function (req, res) {
       let rAt= req.body.reviewedAt;
       let rat= req.body.rating;
       let rev= req.body.review
-      
-      
-        
+           
     if(!rAt){
          return res.status(400).send({ status: false, message: "please enter reviewedAt." }) 
     }
@@ -52,6 +60,8 @@ const createReview = async function (req, res) {
 
 
       if (!validateRating(rat)) { return res.status(400).send({ status: false, message: "please enter a rating between 1 to 5 " }) }
+
+      if (!validateRating(rat)) { return res.status(400).send({ status: false, message: "please enter reviewedAt in this form YYYY-MM-DD, where month value cannot be more than 12 and days value cannot be more than 31" }) }
 
       
 
@@ -112,12 +122,19 @@ const updateReview = async function (req, res){
         if (!Review || book.isDeleted === true) { return res.status(404).send({ status: false, msg: "no such review exists" }) };
         
       
-        
+        if(!isValidReview(review.trim())){return res.status(400).send({status: false, messsage: "enter review correctly"})}
+
+
+
         if (!validateRating(rating)) { return res.status(400).send({ status: false, message: "please enter rating correctly" }) }
+        
+        //  if (!(rating >= 1 && rating <= 5)) {
+            //  return res.status(400).send({ status: false, message: "Rating must be in between 1 to 5." })}
 
         if (!reviewedByValidator(reviewedBy)) { return res.status(400).send({ status: false, message: "please enter reviewedBy correctly" }) }
 
         
+        if (!reviewedByValidator(reviewedBy)) { return res.status(400).send({ status: false, message: "please enter reviewedBy correctly" }) }
 
         if (data.reviewedBy){
             data.reviewedBy = data.reviewedBy;
@@ -131,14 +148,18 @@ const updateReview = async function (req, res){
         if (data.review) {
         data.review = data.review
             }
-                                                  
+                                              
+            if (data.reviewedAt) {
+                data.reviewedAt = data.reviewedAt
+                    }
+
     let findBooks = await bookModel.findOne({ _id: bookID, isDeleted: false }, { deletedAt: 0, __v: 0 });
         
         const ReviewBookCheck = await reviewModel.findOne({ _id: reviewID, bookId: bookID, isDeleted: false })
  
         if (!ReviewBookCheck) { return res.status(404).send({ status: false, msg: "review not matching with the given book" }) }
         else
-        {const update = await reviewModel.findByIdAndUpdate(reviewID, { $set: { ...data , reviewedAt: Date.now()} }, { new: true });
+        {const update = await reviewModel.findByIdAndUpdate(reviewID, { $set: { ...data } }, { new: true });
 
    
        

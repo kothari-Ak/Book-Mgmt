@@ -17,13 +17,13 @@ router.get("/books", Authentication, bookController.getBooks)
 
 router.get("/books/:bookId",Authentication, bookController.getBooksDataById)
 
-router.put("/books/:bookId", Authentication, Authorization, bookController.updateBook)
+router.put("/books/:bookId" ,bookController.updateBook)
 
 router.delete("/books/:bookId",Authentication, Authorization, bookController.deleteById)
 
 router.post("/books/:bookId/review", reviewController.createReview)
 
-router.put("/books/:bookId/review/:reviewId", reviewController.updateReview)
+router.put("/books/:bookId/review/:reviewId" ,reviewController.updateReview)
 
 router.delete("/books/:bookId/review/:reviewId", reviewController.deleteReview)
 

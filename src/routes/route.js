@@ -4,6 +4,7 @@ const router = express.Router();
 const userController = require('../Controllers/userController.js')
 const bookController = require('../Controllers/bookController.js')
 const reviewController = require('../Controllers/reviewController')
+const val = require('../validator/validator')
 //const { Authentication, Authorization, AuthorizationToQuary} = require("../middlewares/authentication")
 
 router.post("/register", userController.createUser)
@@ -16,7 +17,7 @@ router.get("/books", bookController.getBooks)
 
 router.get("/books/:bookId", bookController.getBooksDataById)
 
-router.put("/books/:bookId",  bookController.updateBook)
+router.put("/books/:bookId", val.validateToUpdate, bookController.updateBook)
 
 router.delete("/books/:bookId", bookController.deleteById)
 

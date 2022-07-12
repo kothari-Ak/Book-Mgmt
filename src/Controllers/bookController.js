@@ -209,45 +209,29 @@ const updateBook = async function (req, res) {
         const book = await bookModel.findById(Id);
         if (!book || book.isDeleted === true) { return res.status(404).send({ status: false, msg: "no such book exists" }) };//validation1
 
+        //if(data.title.length == 0){
+          //  return res.status(400).send({status: false, msg:"please enter data to update."})}
+        if(data.excerpt.length == 0){
+            return res.status(400).send({status: false, msg:"please enter data to update."})}
+        if(data.ISBN.length == 0){
+            return res.status(400).send({status: false, msg:"please enter data to update."})}
+        
         if (data.title) {
-            if (!validator.isTitle(data.title)) {
-                return res.status(400).send({ Status: false, message: "Please enter valid title ⚠️⚠️" })
-            }
-            let checkTitle = await bookModel.findOne({ title: data.title })
-            if (checkTitle) {
-                return res.status(400).send({ Status: false, message: "Please provide another title, this title has been used ⚠️⚠️" })
-            }
             data.title = data.title;
         }
-
-
+ 
         if (data.excerpt) {
-            if (!validator.isValid(data.excerpt)) {
-                return res.status(400).send({ Status: false, message: "Please enter valid excerpt ⚠️⚠️" })
-            }
-            let checkExcerpt = await bookModel.findOne({ title: data.excerpt })
-            if (checkExcerpt) {
-                return res.status(400).send({ Status: false, message: "Please provide another title, this excerpt has been used ⚠️⚠️" })
-            }
             data.excerpt = data.excerpt;
         }
-
-
+    
         if (data.ISBN) {
+data.ISBN = data.ISBN}
+ 
 
-            if (!validator.ISBNvalidate(data.ISBN)) {
-                return res.status(400).send({ Status: false, message: "Please enter valid ISBN ⚠️⚠️" })
-            }
-            let checkISBN = await bookModel.findOne({ title: data.ISBN })
-            if (checkISBN) {
-                return res.status(400).send({ Status: false, message: "Please provide another title, this title has been used ⚠️⚠️" })
-            }
-            data.ISBN = data.ISBN
+const y = req.body["release date"]
+if (y.length == 0){
+    return res.status(400).send({status: false, msg:"Enter a valid date with the format (YYYY-MM-DD)."})}
 
-        }
-
-
-        const y = req.body["release date"]
         if (y) {
             if (!moment(data["release date"], "YYYY-MM-DD", true).isValid())
         return res.status(400).send({status: false, msg: "Enter a valid date with the format (YYYY-MM-DD).",

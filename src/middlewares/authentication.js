@@ -1,20 +1,16 @@
 let jwt = require("jsonwebtoken");
 const userModel = require("../Models/userModel");
 const bookModel = require("../Models/bookModel");
-const reviewModel = require("../Models/reviewModel");
 const mongoose  = require("mongoose");
 
 
 //authentication
-const checkLogin = function (req, res, next) {
+const Authentication = function (req, res, next) {
   try {
     let key = req.headers["x-api-key"];
     if (!key) key = req.headers["X-Api-Key"];
     if (!key)
       return res.status(400).send({ msg: "x-api-key header is required" });
-
-    // let isKeyTrue = jwt.verify(key, "bm-8");
-    // if (!isKeyTrue) return res.status(400).send({ err: "invalid key" });
 
         jwt.verify(key, "bm-8",((error)=> {
           if(error){return res.status(401).send({status:false, msg:"invalid token recived for authentication"})};
@@ -89,6 +85,6 @@ let AuthorizationToQuary= async function (req, res, next) {
 }; 
 
 
-module.exports.checkLogin = checkLogin
+module.exports.Authentication = Authentication
 module.exports.Authorization = Authorization
 module.exports.AuthorizationToQuary=AuthorizationToQuary

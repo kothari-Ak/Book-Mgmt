@@ -91,11 +91,11 @@ const loginUser = async function (req, res) {
         let data = req.body;
         let { email, password } = data;
 
-//         if (!validRequest(data)) { return res.status(400).send({ status: false, message: "required details (email and password) are missing" }) }
+        if (!validRequest(data)) { return res.status(400).send({ status: false, message: "required details (email and password) are missing" }) }
 
         if (!validBody(email)) { return res.status(400).send({ status: false, message: "enter the email" }) }
 
-//         if (!validBody(password)) { return res.status(400).send({ status: false, message: "enter the password" }) }
+        if (!validBody(password)) { return res.status(400).send({ status: false, message: "enter the password" }) }
 
         if (!validateEmail(email)) { return res.status(400).send({ status: false, message: "enter valid email" }) }
 

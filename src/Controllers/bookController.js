@@ -6,7 +6,7 @@ const moment = require('moment');
 const reviewModel = require("../Models/reviewModel");
 
 
-
+///////////////////////////////////// createBook api //////////////////////////////////
 const createBook = async function (req, res) {
     try {
         let data = req.body
@@ -112,87 +112,121 @@ const createBook = async function (req, res) {
         res.status(500).send({ msg: "Error", error: err.message })
     }
 }
+////////////////////////////////////////// get books api //////////////////////
+
+     //validation for ObjectId
+     const isValidObjectId = function (objectId) {
+        return mongoose.Types.ObjectId.isValid(objectId);
+       }
 
 const getBooks = async function (req, res) {
     try {
-        let getQueryData = req.query;
-        // let getbookId= req.query.bookId;
-
-        const { userId, category, subcategory } = getQueryData; //bookId
-
-        if (Object.keys(getQueryData).length > 0) {
-            if (!userId && !category && !subcategory) {
-                return res.status(400).send({
-                    status: false,
-                    message: "Please enter value like  'userId','category','subcategory'",
-                });
-            }
+      let getQueryData = req.query;
+  
+      const { userId, category, subcategory } = getQueryData;
+  
+      if (Object.keys(getQueryData).length > 0) {
+        if (!userId && !category && !subcategory) {
+          return res.status(400).send({
+            status: false,
+            message: "Please enter value like  'userId','category','subcategory'",
+          });
         }
-        // let getReviews = await reviewModel.find({bookId: getbookId, isDeleted: false}).select({_id:1, bookId:1, reviewedBy:1, reviewedAt:1, rating:1, review:1});
-       
-        // let updateReviewCount= await reviewModel.count({bookId: getbookId, isDeleted:false})
-
-        //value which will show in response
-        let valueToShow = {
-            _id: 1,
-            title: 1,
-            excerpt: 1,
-            userId: 1,
-            category: 1,
-            subcategory: 1,
-            releasedAt: 1,
-            reviews: 1,
-        };
-            //reviews: updateReviewCount,
-            //reviewsData: getReviews,
-       
-        const findBooks = await bookModel.find({ $and: [getQueryData, { isDeleted: false }] }).select(valueToShow).sort({ title: 1 });
-
-        if (findBooks.length == 0) {
-            return res.status(404).send({ status: false, message: "No Book found" });
-        }
-
-        return res.status(200).send({ status: true, message: "success", data: findBooks });
+      }
+  
+      //value to show in response
+      let valueToShow = {
+        _id: 1,
+        title: 1,
+        excerpt: 1,
+        userId: 1,
+        category: 1,
+        subcategory: 1,
+        releasedAt: 1,
+        reviews: 1,
+      };
+  
+      const findBooks = await bookModel
+        .find({ $and: [getQueryData, { isDeleted: false }] })
+        .select(valueToShow)
+        .sort({ title: 1 });
+  
+      if (findBooks.length == 0) {
+        return res.status(404).send({ status: false, message: "No Book found" });
+      }
+  
+      return res
+        .status(200)
+        .send({ status: true, message: "Book List", data: findBooks });
     } catch (error) {
-        res.status(500).send({ status: false, message: error.message });
+      res.status(500).send({ status: false, message: error.message });
     }
-};
+  };
+  ///////////////////////////////////// getBookById api //////////////////////
+     // New code for getBookById
 
-//getBooksDataById
-//getBooksDataById-path param
-
-//validation for ObjectId
-    const isValidObjectId = function (objectId) {
-        return mongoose.Types.ObjectId.isValid(objectId);
-       }
+    //validation for ObjectId is given above
+    
+    const getBooksDataById = async function (req, res) {
+        try {
+          let getbookId = req.params.bookId;
+      
+          if (!isValidObjectId(getbookId)) {
+            return res.status(400).send({ status: false, message: "BookId is in invalid format." });
+          }
+          //try to find book from that id
+          let findBooks = await bookModel
+            .findOne({ _id: getbookId, isDeleted: false }, { deletedAt: 0, });
+      
+          //if doc not found
+          if (!findBooks) {
+            return res.status(404).send({ status: false, message: "Book not found" });
+          }
+      
+          //Data from reviewModel
+          let valueTohide = { isDeleted: 0, createdAt: 0, updatedAt: 0};
+          const findReviews = await reviewModel.find(
+            { bookId: getbookId, isDeleted: false },
+            valueTohide
+          );
+      
+          findBooks.reviewsData = findReviews;
+      
+          return res
+            .status(200)
+            .send({ status: true, message: "success", data: findBooks });
+        } catch (error) {
+          res.status(500).send({ status: false, message: error.message });
+        }
+      };
  
  
-    const getBooksDataById = async function(req,res){
-         try{
-             let getbookId = req.params.bookId;
+    // const getBooksDataById = async function(req,res){
+    //      try{
+    //          let getbookId = req.params.bookId;
  
-             if (!isValidObjectId(getbookId)) {
-               return res.status(400).send({ status: false, message: "BookId is in invalid format." })
-             }
-             //try to find book from that id
-             let findBooks = await bookModel.findOne({ _id: getbookId, isDeleted: false }, { deletedAt: 0, __v: 0 });
+    //          if (!isValidObjectId(getbookId)) {
+    //            return res.status(400).send({ status: false, message: "BookId is in invalid format." })
+    //          }
+    //          //try to find book from that id
+    //          let findBooks = await bookModel.findOne({ _id: getbookId, isDeleted: false }, { deletedAt: 0, __v: 0 });
          
-             let getReviews = await reviewModel.find({bookId: getbookId, isDeleted: false}).select({_id:1, bookId:1, reviewedBy:1, reviewedAt:1, rating:1, review:1});
-             //if doc not found
+    //          let getReviews = await reviewModel.find({bookId: getbookId, isDeleted: false}).select({_id:1, bookId:1, reviewedBy:1, reviewedAt:1, rating:1, review:1});
+    //          //if doc not found
             
-             let updateReviewCount= await reviewModel.count({bookId: getbookId, isDeleted:false})
+    //          let updateReviewCount= await reviewModel.count({bookId: getbookId, isDeleted:false})
 
             
-             const combinedDetails = { _id: findBooks._id , title: findBooks.title , excerpt: findBooks.excerpt, userId: findBooks.userId, category: findBooks.category, subcategory: findBooks.subcategory, isDeleted: findBooks.isDeleted, reviews: updateReviewCount, releasedAt: findBooks.releasedAt, createdAt:findBooks.createdAt, updatedAt: findBooks.updatedAt , reviewsData: getReviews }
-             if (!findBooks) {
-               return res.status(404).send({ status: false, message: "Book not found" });
-             }
-             return res.status(200).send({ status: true, message: "Books list", data: combinedDetails});
-         } 
-         catch (error) {
-           res.status(500).send({ status: false, message: error.message });
-         }
-       }
+    //          const combinedDetails = { _id: findBooks._id , title: findBooks.title , excerpt: findBooks.excerpt, userId: findBooks.userId, category: findBooks.category, subcategory: findBooks.subcategory, isDeleted: findBooks.isDeleted, reviews: updateReviewCount, releasedAt: findBooks.releasedAt, createdAt:findBooks.createdAt, updatedAt: findBooks.updatedAt , reviewsData: getReviews }
+    //          if (!findBooks) {
+    //            return res.status(404).send({ status: false, message: "Book not found" });
+    //          }
+    //          return res.status(200).send({ status: true, message: "Books list", data: combinedDetails});
+    //      } 
+    //      catch (error) {
+    //        res.status(500).send({ status: false, message: error.message });
+    //      }
+    //    }
 
 
 // const updateBook = async function (req, res) {
@@ -300,6 +334,8 @@ const getBooks = async function (req, res) {
 //             return res.status(500).send({ status: false, message: err.message })
 //         }
 //     }}
+
+///////////////////////////////////// update a book api /////////////////////////////////
 
 let updateBook=async function (req,res){
     try {

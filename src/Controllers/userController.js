@@ -105,13 +105,25 @@ const loginUser = async function (req, res) {
 
         if (Email.password != password)
             return res.status(401).send({ status: false, msg: "invalid password" })
-
-        let key = jwt.sign(
-            {
-                id: Email._id.toString(),
-            },
-            "bm-8"
-        )
+            
+            const iat = Date.now()
+            const exp = (iat) + (24 * 60 * 60 * 1000)
+            let key = jwt.sign(
+               {
+                  id: Email._id.toString(),
+                  iat: iat,
+                  exp: exp
+               },
+               "bm-8"
+            );
+      
+      
+            // let key = jwt.sign(
+        //     {
+        //         id: Email._id.toString(),
+        //     },
+        //     "bm-8"
+        // )
 
         res.setHeader("x-api-key", key)
         res.status(200).send({ status: true, key: key })

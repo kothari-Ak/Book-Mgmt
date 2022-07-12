@@ -200,7 +200,7 @@ const createReview = async function (req, res) {
       let rev= req.body.review
       
       
-      if(rBy && rAt && rat && rev){
+      if( rBy &&rAt && rat && rev){
 
     
       if (!mongoose.Types.ObjectId.isValid(bookId)) { return res.status(400).send({ status: false, msg: "enter a valid id" }) }
@@ -265,7 +265,10 @@ const updateReview = async function (req, res){
         
         if (!reviewedByValidator(reviewedBy)) { return res.status(400).send({ status: false, message: "please enter reviewedBy correctly" }) }
 
-        if (!validateRating(rating)) { return res.status(400).send({ status: false, message: "please enter rating correctly" }) }
+        if (!(rating >= 1 && rating <= 5)) {
+            return res.status(400).send({ status: false, message: "Rating must be in between 1 to 5." })
+        }
+
 
         
 

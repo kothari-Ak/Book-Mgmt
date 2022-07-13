@@ -1,6 +1,6 @@
 const userModel = require("../Models/userModel");
 const jwt = require("jsonwebtoken")
-
+const Authentication = require("../middlewares/authentication")
 
 const validBody = function (value) {
 
@@ -13,7 +13,6 @@ const validBody = function (value) {
     return true
 
 }
-
 
 let nameValidator = function (name) {
     let regx = /^[a-zA-z]+([\s][a-zA-Z\,]+)*$/;
@@ -43,7 +42,7 @@ let validatePassword = (password) => {
 const createUser = async function (req, res) {
     try {
         let data = req.body
-        let { title, name, phone, email, password} = data
+        let { title, name, phone, email, password, address } = data
 
         if (!validRequest(data)) { return res.status(400).send({ status: false, message: "body can't be empty" }) }
 
@@ -82,9 +81,6 @@ const createUser = async function (req, res) {
     }
 }
 
-module.exports.createUser = createUser
-
-
 
 const loginUser = async function (req, res) {
     try {
@@ -105,15 +101,16 @@ const loginUser = async function (req, res) {
         if (!Email) return res.status(400).send({ status: false, message: "user not found" })
 
         if (Email.password != password)
-            return res.status(401).send({ status: false, msg: "invalid password" })
+            return res.status(401).send({ status: false, msg: "invalid password" })    
 
-        let key = jwt.sign(
+            let key = jwt.sign(
             {
                 id: Email._id.toString(),
-            },
-            "bm-8"
-        )
-
+                iat: Email.iat,
+                iat:Math.floor(new Date().getTime()/1000)},
+                "bm-8",{expiresIn:"3h"});
+        
+        
         res.setHeader("x-api-key", key)
         res.status(200).send({ status: true, key: key })
 
@@ -122,4 +119,5 @@ const loginUser = async function (req, res) {
     }
 };
 
+module.exports.createUser = createUser
 module.exports.loginUser = loginUser

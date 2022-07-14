@@ -1,6 +1,6 @@
 const userModel = require("../Models/userModel");
 const jwt = require("jsonwebtoken")
-const Authentication = require("../middlewares/authentication")
+
 
 const validBody = function (value) {
 
@@ -42,7 +42,7 @@ let validatePassword = (password) => {
 const createUser = async function (req, res) {
     try {
         let data = req.body
-        let { title, name, phone, email, password, address } = data
+        let { title, name, phone, email, password} = data
 
         if (!validRequest(data)) { return res.status(400).send({ status: false, message: "body can't be empty" }) }
 
@@ -106,9 +106,8 @@ const loginUser = async function (req, res) {
             let key = jwt.sign(
             {
                 id: Email._id.toString(),
-                iat: Email.iat,
-                iat:Math.floor(new Date().getTime()/1000)},
-                "bm-8",{expiresIn:"3h"});
+            },
+                "bm-8",{expiresIn:"7200s"});
         
         
         res.setHeader("x-api-key", key)
@@ -118,6 +117,7 @@ const loginUser = async function (req, res) {
         res.status(500).send({ msg: error.message })
     }
 };
+
 
 module.exports.createUser = createUser
 module.exports.loginUser = loginUser

@@ -172,7 +172,7 @@ const getBooks = async function (req, res) {
             
              
              //try to find book from that id
-             let findBooks = await bookModel.findOne({ _id: getbookId, isDeleted: false }, { deletedAt: 0, __v: 0 });
+             let findBooks = await bookModel.findById({ _id: getbookId, isDeleted: false }, { deletedAt: 0, __v: 0 });
              if(!findBooks) return res.status(404).send({ status: false, msg:"Book doesn't exist"  })
 
              let getReviews = await reviewModel.find({bookId: getbookId, isDeleted: false}).select({_id:1, bookId:1, reviewedBy:1, reviewedAt:1, rating:1, review:1});
@@ -204,7 +204,7 @@ let updateBook=async function (req,res){
         }
         let data=req.body
         let book=req.params.bookId 
-        const findBook = await bookModel.findById({_id:book,isDeleted:false}).lean()
+        const findBook = await bookModel.findOne({_id:book,isDeleted:false}).lean()
         if(!findBook) return res.status(404).send({ status: false, msg:"No book found"  })
 
         let temp={};
@@ -252,7 +252,8 @@ const deleteById = async function (req, res) {
         const book = await bookModel.findById(id);
         if (!book || book.isDeleted === true) { return res.status(404).send({ status: false, msg: "no such book exists" }) };//validation1
 
-        const dateTime = new Date;
+        const dateTime= new Date();
+        
 
         await bookModel.findByIdAndUpdate(id, { $set: { isDeleted: true, deletedAt: dateTime } });
         return res.status(200).send({ status: true, msg: "book deleted successfully" });

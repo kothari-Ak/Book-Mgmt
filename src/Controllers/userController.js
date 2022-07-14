@@ -64,6 +64,9 @@ const createUser = async function (req, res) {
 
         if (!validatePassword(password)) { return res.status(400).send({ status: false, message: "enter valid password" }) }
 
+        if(data.address){
+        if(typeof data.address !== "object")return res.status(400).send({status:false,msg:"address must be in the form of object"})}
+
         if (!["Mr", "Mrs", "Miss"].includes(data.title.trim())) { return res.status(400).send({ status: false, msg: "title must be Mr, Mrs or Miss" }) }
 
         let Email = await userModel.findOne({ email: email })
@@ -81,6 +84,9 @@ const createUser = async function (req, res) {
     }
 }
 
+module.exports.createUser = createUser
+
+
 
 const loginUser = async function (req, res) {
     try {
@@ -97,6 +103,7 @@ const loginUser = async function (req, res) {
 
         if (!validatePassword(password)) { return res.status(400).send({ status: false, message: "enter valid password" }) }
 
+
         let Email = await userModel.findOne({ email: email })
         if (!Email) return res.status(400).send({ status: false, message: "user not found" })
 
@@ -106,8 +113,8 @@ const loginUser = async function (req, res) {
             let key = jwt.sign(
             {
                 id: Email._id.toString(),
-            },
-                "bm-8",{expiresIn:"7200s"});
+                },
+                "bm-8",{expiresIn:"3h"});
         
         
         res.setHeader("x-api-key", key)
@@ -118,6 +125,4 @@ const loginUser = async function (req, res) {
     }
 };
 
-
-module.exports.createUser = createUser
 module.exports.loginUser = loginUser

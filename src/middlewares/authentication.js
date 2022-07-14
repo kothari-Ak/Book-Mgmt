@@ -1,7 +1,7 @@
 let jwt = require("jsonwebtoken");
 const userModel = require("../Models/userModel");
 const bookModel = require("../Models/bookModel");
-const mongoose  = require("mongoose");
+
 
 
 //authentication
@@ -34,7 +34,7 @@ let Authorization = async function (req, res, next) {
     logedinUserID = decodeToken.id;
  
     requestBookId = req.params.bookId.toString()
-    if (!mongoose.Types.ObjectId.isValid(requestBookId))
+    if (requestBookId.length != 24)
       return res.status(400).send({ msg: "enter valid bookid" });
 
     findBookID = await bookModel.findOne({ _id: requestBookId  });
@@ -75,7 +75,7 @@ let AuthorizationToQuary= async function (req, res, next) {
     let userID = UserID._id.toString();
 
     if (logedinUserID != userID)
-      return res.status(403).send({ msg: "loggedin user is not authorized To create book " });
+      return res.status(403).send({ msg: "logedin user is not authorized To create book " });
 
     next();
   } catch (error) {

@@ -5,9 +5,41 @@ const validator = require("../validator/validator.js")
 const moment = require('moment');
 const reviewModel = require("../Models/reviewModel");
 
+const aws= require("aws-sdk")
 
+aws.config.update({
+    accessKeyId: "AKIAY3L35MCRVFM24Q7U",
+    secretAccessKey: "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",
+    region: "ap-south-1"
+})
+
+let uploadFile= async ( file) =>{
+   return new Promise( function(resolve, reject) {
+    // this function will upload file to aws and return the link
+    let s3= new aws.S3({apiVersion: '2006-03-01'}); // we will be using the s3 service of aws
+
+    var uploadParams= {
+        ACL: "public-read",
+        Bucket: "classroom-training-bucket",  //HERE
+        Key: "abc/" + file.originalname, //HERE 
+        Body: file.buffer
+    }
+
+
+    s3.upload( uploadParams, function (err, data ){
+        if(err) {
+            return reject({"error": err})
+        }
+        console.log(data)
+        console.log("file uploaded succesfully")
+        return resolve(data.Location)
+    })
+    
+})
+}
 
 const createBook = async function (req, res) {
+
     try {
         let data = req.body
         const { title, excerpt, userId, ISBN, category, subcategory, releasedAt } = data
@@ -105,6 +137,13 @@ const createBook = async function (req, res) {
                 msg: "Enter a valid date with the format (YYYY-MM-DD).",
             })
 
+            let files= req.files
+            if(files && files.length>0){
+                //upload to s3 and get the uploaded link
+                // res.send the link back to frontend/postman
+                let uploadedFileURL= await uploadFile( files[0] )
+                data.bookCover=uploadedFileURL
+            }
         let bookCreated = await bookModel.create(data)
         res.status(201).send({ status: true, data: bookCreated })
     }
@@ -203,7 +242,7 @@ let updateBook=async function (req,res){
 
         const isValidDate = function (Date) {
             let trimDate=Date.trim()
-            if (/^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/.test(Date)) return true
+            if (/^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/.test(trimDate)) return true
         }
         let data=req.body
         let book=req.params.bookId 

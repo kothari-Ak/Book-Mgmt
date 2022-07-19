@@ -15,8 +15,8 @@ const bookSchema = new mongoose.Schema({
 
     category: {type: String, required: true, lowercase: true},
 
-    subcategory: [{type: String, required: true, lowercase: true}],
+    subcategory: [{type: String, required: true, lowercase: true}]},
 
-    timestamps: true})
+    {timestamps: true})
 
     module.exports = mongoose.model('books', bookSchema)
